@@ -1,0 +1,119 @@
+---
+- name: Deploy AAP Resources from Infrastructure as Code
+  hosts: localhost
+  gather_facts: true
+  vars:
+    aap_controller_host: "{{ aap_controller_url | default('https://controller.example.com') }}"
+    aap_controller_username: "{{ lookup('env', 'AAP_USERNAME') }}"
+    aap_controller_password: "{{ lookup('env', 'AAP_PASSWORD') }}"
+    aap_controller_validate_certs: "{{ validate_certs | default(true) }}"
+    iac_source_dir: "./iac-exports"
+
+  collections:
+    - awx.awx
+    - ansible.controller
+
+  pre_tasks:
+    - name: Validate required environment variables
+      assert:
+        that:
+          - aap_controller_username is defined
+          - aap_controller_password is defined
+        fail_msg: "AAP_USERNAME and AAP_PASSWORD environment variables must be set"
+
+    - name: Check IaC source directory exists
+      stat:
+        path: "{{ iac_source_dir }}"
+      register: iac_dir
+      failed_when: not iac_dir.stat.exists
+
+  tasks:
+    - name: Load organization definitions
+      include_vars:
+        file: "{{ iac_source_dir }}/organizations/organizations_latest.yml"
+        name: organizations
+
+    - name: Create or update organizations
+      controller_organization:
+        controller_host: "{{ aap_controller_host }}"
+        controller_username: "{{ aap_controller_username }}"
+        controller_password: "{{ aap_controller_password }}"
+        validate_certs: "{{ aap_controller_validate_certs }}"
+        state: present
+        name: "{{ item.name }}"
+        description: "{{ item.description | default(omit) }}"
+      loop: "{{ organizations.results | default([]) }}"
+      register: org_deploy
+
+    - name: Load user definitions
+      include_vars:
+        file: "{{ iac_source_dir }}/users/users_latest.yml"
+        name: users
+      ignore_errors: true
+
+    - name: Create or update users
+      user:
+        controller_host: "{{ aap_controller_host }}"
+        controller_username: "{{ aap_controller_username }}"
+        controller_password: "{{ aap_controller_password }}"
+        validate_certs: "{{ aap_controller_validate_certs }}"
+        state: present
+        username: "{{ item.username }}"
+        email: "{{ item.email | default(omit) }}"
+        first_name: "{{ item.first_name | default(omit) }}"
+        last_name: "{{ item.last_name | default(omit) }}"
+      loop: "{{ users.results | default([]) }}"
+      register: user_deploy
+      ignore_errors: true
+
+    - name: Load team definitions
+      include_vars:
+        file: "{{ iac_source_dir }}/teams/teams_latest.yml"
+        name: teams
+      ignore_errors: true
+
+    - name: Create or update teams
+      team:
+        controller_host: "{{ aap_controller_host }}"
+        controller_username: "{{ aap_controller_username }}"
+        controller_password: "{{ aap_controller_password }}"
+        validate_certs: "{{ aap_controller_validate_certs }}"
+        state: present
+        name: "{{ item.name }}"
+        organization: "{{ item.organization }}"
+        description: "{{ item.description | default(omit) }}"
+      loop: "{{ teams.results | default([]) }}"
+      register: team_deploy
+      ignore_errors: true
+
+    - name: Load project definitions
+      include_vars:
+        file: "{{ iac_source_dir }}/projects/projects_latest.yml"
+        name: projects
+      ignore_errors: true
+
+    - name: Create or update projects
+      project:
+        controller_host: "{{ aap_controller_host }}"
+        controller_username: "{{ aap_controller_username }}"
+        controller_password: "{{ aap_controller_password }}"
+        validate_certs: "{{ aap_controller_validate_certs }}"
+        state: present
+        name: "{{ item.name }}"
+        organization: "{{ item.organization }}"
+        scm_type: "{{ item.scm_type | default('') }}"
+        scm_url: "{{ item.scm_url | default('') }}"
+        scm_branch: "{{ item.scm_branch | default('main') }}"
+      loop: "{{ projects.results | default([]) }}"
+      register: project_deploy
+      ignore_errors: true
+
+  post_tasks:
+    - name: Display deployment summary
+      debug:
+        msg: |
+          Deployment Summary:
+          - Organizations created/updated: {{ org_deploy.results | length }}
+          - Users created/updated: {{ user_deploy.results | length | default(0) }}
+          - Teams created/updated: {{ team_deploy.results | length | default(0) }}
+          - Projects created/updated: {{ project_deploy.results | length | default(0) }}
