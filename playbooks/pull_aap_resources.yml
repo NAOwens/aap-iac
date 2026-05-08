@@ -61,7 +61,7 @@
 
     # Users
     - name: Pull users from AAP Controller
-      unsible.controller.user:
+      ansible.controller.user:
         controller_host: "{{ aap_controller_host }}"
         controller_username: "{{ aap_controller_username }}"
         controller_password: "{{ aap_controller_password }}"
