@@ -5,8 +5,9 @@
   gather_facts: true
   vars:
     aap_controller_host: "{{ aap_controller_url | default('https://controller.example.com') }}"
-    aap_controller_username: "{{ lookup('env', 'AAP_USERNAME') }}"
-    aap_controller_password: "{{ lookup('env', 'AAP_PASSWORD') }}"
+    aap_controller_token: "{{ lookup('env', 'AAP_TOKEN') }}"
+    #aap_controller_username: "{{ lookup('env', 'AAP_USERNAME') }}"
+    #aap_controller_password: "{{ lookup('env', 'AAP_PASSWORD') }}"
     aap_controller_validate_certs: "{{ validate_certs | default(true) }}"
     iac_output_dir: "./iac-exports"
     timestamp: "{{ ansible_date_time.iso8601_basic_short }}"
@@ -51,7 +52,8 @@
         state: present
         name: "{{ item }}"
       register: org_results
-      loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+      #loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+      loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
     - name: Export organizations to YAML
@@ -70,8 +72,9 @@
         state: present
         username: "{{ item.username }}"
       register: user_results
-      loop: "{{ query('awx.awx.controller_api', 'users', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
-      ignore_errors: true
+      #loop: "{{ query('awx.awx.controller_api', 'users', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+      loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
+      ignore_errors: false
 
     - name: Export users to YAML
       ansible.builtin.copy:
