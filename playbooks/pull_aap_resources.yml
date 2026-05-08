@@ -20,9 +20,11 @@
     - name: Validate required environment variables
       ansible.builtin.assert:
         that:
-          - aap_controller_username is defined
-          - aap_controller_password is defined
-        fail_msg: "AAP_USERNAME and AAP_PASSWORD environment variables must be set"
+          - aap_controller_token is defined
+       #   - aap_controller_username is defined
+       #   - aap_controller_password is defined
+       # fail_msg: "AAP_USERNAME and AAP_PASSWORD environment variables must be set"
+        fail_msg: "AAP_TOKEN environment variable must be set"
 
     - name: Create output directory structure
       ansible.builtin.file:
