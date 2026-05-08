@@ -177,7 +177,7 @@
 
     # Workflows
     - name: Pull workflow templates from AAP Controller
-      workflow_template:
+      ansible.controller.workflow_template:
         controller_host: "{{ aap_controller_host }}"
         controller_username: "{{ aap_controller_username }}"
         controller_password: "{{ aap_controller_password }}"
