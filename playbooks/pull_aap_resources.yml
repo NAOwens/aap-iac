@@ -61,7 +61,7 @@
     - name: Pull users from AAP Controller
       ansible.controller.user:
         controller_host: "{{ aap_controller_host }}"
-        aap_token: "{{ aap_controller_token }}"
+        controller_oauthtoken: "{{ aap_controller_token }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         username: "{{ item.username }}"
