@@ -6,8 +6,6 @@
   vars:
     aap_controller_host: "{{ aap_controller_url | default('https://controller.example.com') }}"
     aap_controller_token: "{{ lookup('env', 'AAP_TOKEN') }}"
-    #aap_controller_username: "{{ lookup('env', 'AAP_USERNAME') }}"
-    #aap_controller_password: "{{ lookup('env', 'AAP_PASSWORD') }}"
     aap_controller_validate_certs: "{{ validate_certs | default(true) }}"
     iac_output_dir: "./iac-exports"
     timestamp: "{{ ansible_date_time.iso8601_basic_short }}"
@@ -21,9 +19,6 @@
       ansible.builtin.assert:
         that:
           - aap_controller_token is defined
-       #   - aap_controller_username is defined
-       #   - aap_controller_password is defined
-       # fail_msg: "AAP_USERNAME and AAP_PASSWORD environment variables must be set"
         fail_msg: "AAP_TOKEN environment variable must be set"
 
     - name: Create output directory structure
@@ -48,13 +43,10 @@
     - name: Pull organizations from AAP Controller
       ansible.controller.organization:
         controller_host: "{{ aap_controller_host }}"
-        controller_username: "{{ aap_controller_username }}"
-        controller_password: "{{ aap_controller_password }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item }}"
       register: org_results
-      #loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
       loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
@@ -68,13 +60,10 @@
     - name: Pull users from AAP Controller
       ansible.controller.user:
         controller_host: "{{ aap_controller_host }}"
-        controller_username: "{{ aap_controller_username }}"
-        controller_password: "{{ aap_controller_password }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         username: "{{ item.username }}"
       register: user_results
-      #loop: "{{ query('awx.awx.controller_api', 'users', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
       loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
@@ -88,14 +77,11 @@
     - name: Pull teams from AAP Controller
       ansible.controller.team:
         controller_host: "{{ aap_controller_host }}"
-        controller_username: "{{ aap_controller_username }}"
-        controller_password: "{{ aap_controller_password }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
         organization: "{{ item.organization }}"
       register: team_results
-      #loop: "{{ query('awx.awx.controller_api', 'teams', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
       loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
@@ -108,7 +94,6 @@
     # Credentials (without sensitive data)
     - name: Pull credentials metadata from AAP Controller
       set_fact:
-        #ansible.controller.credentials_list: "{{ query('awx.awx.controller_api', 'credentials', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
         credentials_list: "{{ query('awx.awx.controller_api', 'credentials', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
 
     - name: Export credential metadata to YAML
@@ -125,8 +110,6 @@
     - name: Pull projects from AAP Controller
       ansible.controller.project:
         controller_host: "{{ aap_controller_host }}"
-        controller_username: "{{ aap_controller_username }}"
-        controller_password: "{{ aap_controller_password }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
@@ -134,7 +117,6 @@
         scm_type: "{{ item.scm_type | default('') }}"
         scm_url: "{{ item.scm_url | default('') }}"
       register: project_results
-      #loop: "{{ query('awx.awx.controller_api', 'projects', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
       loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
@@ -148,14 +130,11 @@
     - name: Pull inventories from AAP Controller
       ansible.controller.inventory:
         controller_host: "{{ aap_controller_host }}"
-        controller_username: "{{ aap_controller_username }}"
-        controller_password: "{{ aap_controller_password }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
         organization: "{{ item.organization }}"
       register: inventory_results
-      #loop: "{{ query('awx.awx.controller_api', 'inventories', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
       loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
@@ -169,14 +148,11 @@
     - name: Pull job templates from AAP Controller
       ansible.controller.job_template:
         controller_host: "{{ aap_controller_host }}"
-        controller_username: "{{ aap_controller_username }}"
-        controller_password: "{{ aap_controller_password }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
         organization: "{{ item.organization }}"
       register: job_template_results
-      #loop: "{{ query('awx.awx.controller_api', 'job_templates', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
       loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
@@ -190,14 +166,11 @@
     - name: Pull workflow templates from AAP Controller
       ansible.controller.workflow_job_template:
         controller_host: "{{ aap_controller_host }}"
-        controller_username: "{{ aap_controller_username }}"
-        controller_password: "{{ aap_controller_password }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
         organization: "{{ item.organization }}"
       register: workflow_results
-      #loop: "{{ query('awx.awx.controller_api', 'workflow_templates', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
       loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
@@ -211,13 +184,10 @@
     - name: Pull notification templates from AAP Controller
       ansible.controller.notification_template:
         controller_host: "{{ aap_controller_host }}"
-        controller_username: "{{ aap_controller_username }}"
-        controller_password: "{{ aap_controller_password }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
       register: notification_results
-      #loop: "{{ query('awx.awx.controller_api', 'notification_templates', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
       loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
