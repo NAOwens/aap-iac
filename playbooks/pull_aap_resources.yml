@@ -10,6 +10,7 @@
     playbook_dir: "NAOwens/aap-iac"
     iac_output_dir: "./iac-exports"
     timestamp: "{{ ansible_date_time.iso8601_basic_short }}"
+    git_token_variable: "{{ github_token }}"
 
   collections:
     - awx.awx
