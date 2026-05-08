@@ -42,7 +42,7 @@
   tasks:
     # Organizations
     - name: Pull organizations from AAP Controller
-      ansible.controller_organization:
+      awx.awx.controller_organization:
         controller_host: "{{ aap_controller_host }}"
         controller_username: "{{ aap_controller_username }}"
         controller_password: "{{ aap_controller_password }}"
