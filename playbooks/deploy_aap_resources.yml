@@ -4,8 +4,7 @@
   gather_facts: true
   vars:
     aap_controller_host: "{{ aap_controller_url | default('https://controller.example.com') }}"
-    aap_controller_username: "{{ lookup('env', 'AAP_USERNAME') }}"
-    aap_controller_password: "{{ lookup('env', 'AAP_PASSWORD') }}"
+    aap_controller_token: "{{ lookup('env', 'AAP_TOKEN') }}"
     aap_controller_validate_certs: "{{ validate_certs | default(true) }}"
     iac_source_dir: "./iac-exports"
 
@@ -15,88 +14,84 @@
 
   pre_tasks:
     - name: Validate required environment variables
-      assert:
+      ansible.builtin.assert:
         that:
-          - aap_controller_username is defined
-          - aap_controller_password is defined
-        fail_msg: "AAP_USERNAME and AAP_PASSWORD environment variables must be set"
+          - aap_controller_token is defined and aap_controller_token != ''
+        fail_msg: "AAP_TOKEN environment variable must be set"
 
     - name: Check IaC source directory exists
-      stat:
+      ansible.builtin.stat:
         path: "{{ iac_source_dir }}"
       register: iac_dir
       failed_when: not iac_dir.stat.exists
 
   tasks:
     - name: Load organization definitions
-      include_vars:
+      ansible.builtin.include_vars:
         file: "{{ iac_source_dir }}/organizations/organizations_latest.yml"
         name: organizations
 
     - name: Create or update organizations
-      controller_organization:
+      ansible.controller.organization:
         controller_host: "{{ aap_controller_host }}"
-        controller_username: "{{ aap_controller_username }}"
-        controller_password: "{{ aap_controller_password }}"
+        controller_oauthtoken: "{{ aap_controller_token }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
         description: "{{ item.description | default(omit) }}"
-      loop: "{{ organizations.results | default([]) }}"
+      loop: "{{ organizations | default([]) }}"
       register: org_deploy
+      ignore_errors: true
 
     - name: Load user definitions
-      include_vars:
+      ansible.builtin.include_vars:
         file: "{{ iac_source_dir }}/users/users_latest.yml"
         name: users
       ignore_errors: true
 
     - name: Create or update users
-      user:
+      ansible.controller.user:
         controller_host: "{{ aap_controller_host }}"
-        controller_username: "{{ aap_controller_username }}"
-        controller_password: "{{ aap_controller_password }}"
+        controller_oauthtoken: "{{ aap_controller_token }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         username: "{{ item.username }}"
         email: "{{ item.email | default(omit) }}"
         first_name: "{{ item.first_name | default(omit) }}"
         last_name: "{{ item.last_name | default(omit) }}"
-      loop: "{{ users.results | default([]) }}"
+      loop: "{{ users | default([]) }}"
       register: user_deploy
       ignore_errors: true
 
     - name: Load team definitions
-      include_vars:
+      ansible.builtin.include_vars:
         file: "{{ iac_source_dir }}/teams/teams_latest.yml"
         name: teams
       ignore_errors: true
 
     - name: Create or update teams
-      team:
+      ansible.controller.team:
         controller_host: "{{ aap_controller_host }}"
-        controller_username: "{{ aap_controller_username }}"
-        controller_password: "{{ aap_controller_password }}"
+        controller_oauthtoken: "{{ aap_controller_token }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
         organization: "{{ item.organization }}"
         description: "{{ item.description | default(omit) }}"
-      loop: "{{ teams.results | default([]) }}"
+      loop: "{{ teams | default([]) }}"
       register: team_deploy
       ignore_errors: true
 
     - name: Load project definitions
-      include_vars:
+      ansible.builtin.include_vars:
         file: "{{ iac_source_dir }}/projects/projects_latest.yml"
         name: projects
       ignore_errors: true
 
     - name: Create or update projects
-      project:
+      ansible.controller.project:
         controller_host: "{{ aap_controller_host }}"
-        controller_username: "{{ aap_controller_username }}"
-        controller_password: "{{ aap_controller_password }}"
+        controller_oauthtoken: "{{ aap_controller_token }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
@@ -104,16 +99,97 @@
         scm_type: "{{ item.scm_type | default('') }}"
         scm_url: "{{ item.scm_url | default('') }}"
         scm_branch: "{{ item.scm_branch | default('main') }}"
-      loop: "{{ projects.results | default([]) }}"
+      loop: "{{ projects | default([]) }}"
       register: project_deploy
+      ignore_errors: true
+
+    - name: Load inventory definitions
+      ansible.builtin.include_vars:
+        file: "{{ iac_source_dir }}/inventories/inventories_latest.yml"
+        name: inventories
+      ignore_errors: true
+
+    - name: Create or update inventories
+      ansible.controller.inventory:
+        controller_host: "{{ aap_controller_host }}"
+        controller_oauthtoken: "{{ aap_controller_token }}"
+        validate_certs: "{{ aap_controller_validate_certs }}"
+        state: present
+        name: "{{ item.name }}"
+        organization: "{{ item.organization }}"
+        description: "{{ item.description | default(omit) }}"
+      loop: "{{ inventories | default([]) }}"
+      register: inventory_deploy
+      ignore_errors: true
+
+    - name: Load job template definitions
+      ansible.builtin.include_vars:
+        file: "{{ iac_source_dir }}/job_templates/job_templates_latest.yml"
+        name: job_templates
+      ignore_errors: true
+
+    - name: Create or update job templates
+      ansible.controller.job_template:
+        controller_host: "{{ aap_controller_host }}"
+        controller_oauthtoken: "{{ aap_controller_token }}"
+        validate_certs: "{{ aap_controller_validate_certs }}"
+        state: present
+        name: "{{ item.name }}"
+        organization: "{{ item.organization }}"
+        project: "{{ item.project | default(omit) }}"
+        playbook: "{{ item.playbook | default(omit) }}"
+        inventory: "{{ item.inventory | default(omit) }}"
+      loop: "{{ job_templates | default([]) }}"
+      register: job_template_deploy
+      ignore_errors: true
+
+    - name: Load workflow template definitions
+      ansible.builtin.include_vars:
+        file: "{{ iac_source_dir }}/workflows/workflows_latest.yml"
+        name: workflows
+      ignore_errors: true
+
+    - name: Create or update workflow templates
+      ansible.controller.workflow_job_template:
+        controller_host: "{{ aap_controller_host }}"
+        controller_oauthtoken: "{{ aap_controller_token }}"
+        validate_certs: "{{ aap_controller_validate_certs }}"
+        state: present
+        name: "{{ item.name }}"
+        organization: "{{ item.organization }}"
+        description: "{{ item.description | default(omit) }}"
+      loop: "{{ workflows | default([]) }}"
+      register: workflow_deploy
+      ignore_errors: true
+
+    - name: Load notification template definitions
+      ansible.builtin.include_vars:
+        file: "{{ iac_source_dir }}/notification_templates/notifications_latest.yml"
+        name: notifications
+      ignore_errors: true
+
+    - name: Create or update notification templates
+      ansible.controller.notification_template:
+        controller_host: "{{ aap_controller_host }}"
+        controller_oauthtoken: "{{ aap_controller_token }}"
+        validate_certs: "{{ aap_controller_validate_certs }}"
+        state: present
+        name: "{{ item.name }}"
+        notification_type: "{{ item.notification_type | default(omit) }}"
+      loop: "{{ notifications | default([]) }}"
+      register: notification_deploy
       ignore_errors: true
 
   post_tasks:
     - name: Display deployment summary
-      debug:
+      ansible.builtin.debug:
         msg: |
           Deployment Summary:
-          - Organizations created/updated: {{ org_deploy.results | length }}
+          - Organizations created/updated: {{ org_deploy.results | length | default(0) }}
           - Users created/updated: {{ user_deploy.results | length | default(0) }}
           - Teams created/updated: {{ team_deploy.results | length | default(0) }}
           - Projects created/updated: {{ project_deploy.results | length | default(0) }}
+          - Inventories created/updated: {{ inventory_deploy.results | length | default(0) }}
+          - Job Templates created/updated: {{ job_template_deploy.results | length | default(0) }}
+          - Workflow Templates created/updated: {{ workflow_deploy.results | length | default(0) }}
+          - Notification Templates created/updated: {{ notification_deploy.results | length | default(0) }}
