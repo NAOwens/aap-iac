@@ -2,5 +2,5 @@
 collections:
   - name: awx.awx
     version: ">=24.0.0"
-  - name: ansible.controller
+#  - name: ansible.controller
 #    version: ">=24.0.0"
