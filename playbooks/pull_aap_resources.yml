@@ -1,6 +1,7 @@
 ---
 - name: Pull AAP Resources and Store as Infrastructure as Code
   hosts: localhost
+  connection: local
   gather_facts: true
   vars:
     aap_controller_host: "{{ aap_controller_url | default('https://controller.example.com') }}"
