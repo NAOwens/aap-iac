@@ -76,7 +76,7 @@
       register: user_results
       #loop: "{{ query('awx.awx.controller_api', 'users', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
       loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
-      ignore_errors: false
+      ignore_errors: true
 
     - name: Export users to YAML
       ansible.builtin.copy:
@@ -95,7 +95,8 @@
         name: "{{ item.name }}"
         organization: "{{ item.organization }}"
       register: team_results
-      loop: "{{ query('awx.awx.controller_api', 'teams', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+      #loop: "{{ query('awx.awx.controller_api', 'teams', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+      loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
     - name: Export teams to YAML
@@ -107,7 +108,8 @@
     # Credentials (without sensitive data)
     - name: Pull credentials metadata from AAP Controller
       set_fact:
-        ansible.controller.credentials_list: "{{ query('awx.awx.controller_api', 'credentials', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+        #ansible.controller.credentials_list: "{{ query('awx.awx.controller_api', 'credentials', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+        credentials_list: "{{ query('awx.awx.controller_api', 'credentials', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
 
     - name: Export credential metadata to YAML
       ansible.builtin.copy:
@@ -132,7 +134,8 @@
         scm_type: "{{ item.scm_type | default('') }}"
         scm_url: "{{ item.scm_url | default('') }}"
       register: project_results
-      loop: "{{ query('awx.awx.controller_api', 'projects', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+      #loop: "{{ query('awx.awx.controller_api', 'projects', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+      loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
     - name: Export projects to YAML
@@ -152,7 +155,8 @@
         name: "{{ item.name }}"
         organization: "{{ item.organization }}"
       register: inventory_results
-      loop: "{{ query('awx.awx.controller_api', 'inventories', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+      #loop: "{{ query('awx.awx.controller_api', 'inventories', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+      loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
     - name: Export inventories to YAML
@@ -172,7 +176,8 @@
         name: "{{ item.name }}"
         organization: "{{ item.organization }}"
       register: job_template_results
-      loop: "{{ query('awx.awx.controller_api', 'job_templates', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+      #loop: "{{ query('awx.awx.controller_api', 'job_templates', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+      loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
     - name: Export job templates to YAML
@@ -192,7 +197,8 @@
         name: "{{ item.name }}"
         organization: "{{ item.organization }}"
       register: workflow_results
-      loop: "{{ query('awx.awx.controller_api', 'workflow_templates', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+      #loop: "{{ query('awx.awx.controller_api', 'workflow_templates', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+      loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
     - name: Export workflow templates to YAML
@@ -211,7 +217,8 @@
         state: present
         name: "{{ item.name }}"
       register: notification_results
-      loop: "{{ query('awx.awx.controller_api', 'notification_templates', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+      #loop: "{{ query('awx.awx.controller_api', 'notification_templates', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+      loop: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
     - name: Export notification templates to YAML
