@@ -4,8 +4,8 @@
   connection: local
   gather_facts: true
   vars:
-    aap_controller_host: "{{ CONTROLLER_HOST }}"
-    aap_controller_token: "{{ CONTROLLER_OAUTH_TOKEN }}"
+    aap_controller_host: "{{ lookup('env', 'CONTROLLER_HOST') }}"
+    aap_controller_token: "{{ lookup ('env', 'CONTROLLER_OAUTH_TOKEN') }}"
     aap_controller_validate_certs: "{{ validate_certs | default(true) }}"
     playbook_dir: "NAOwens/aap-iac"
     iac_output_dir: "./iac-exports"
