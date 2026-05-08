@@ -5,7 +5,7 @@
   gather_facts: true
   vars:
     aap_controller_host: "{{ aap_controller_url | default('https://controller.example.com') }}"
-    aap_controller_token: "{{ AAP_TOKEN }}"
+    aap_controller_token: "{{ CONTROLLER_OAUTH_TOKEN }}"
     aap_controller_validate_certs: "{{ validate_certs | default(true) }}"
     playbook_dir: "NAOwens/aap-iac"
     iac_output_dir: "./iac-exports"
