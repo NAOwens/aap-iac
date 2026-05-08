@@ -186,8 +186,7 @@
 
     - name: Clone the CaC repository
       ansible.builtin.git:
-       # repo: 'https://{{ git_token_variable }}@github.com/NAOwens/aap-iac.git' 
-        repo: 'https://github.com/NAOwens/aap-iac.git' 
+        repo: 'https://{{ git_token_variable }}@github.com/NAOwens/aap-iac.git' 
         dest: /tmp/cac_repo
         version: main
         # This allows the module to accept the host key automatically
