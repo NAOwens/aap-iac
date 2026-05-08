@@ -8,7 +8,7 @@
     aap_controller_token: "{{ AAP_TOKEN }}"
     #aap_controller_token: "{{ lookup('env', 'AAP_TOKEN') }}"
     aap_controller_validate_certs: "{{ validate_certs | default(true) }}"
-    iac_output_dir: "./iac-exports"
+    iac_output_dir: "/tmp/iac-exports"
     timestamp: "{{ ansible_date_time.iso8601_basic_short }}"
 
   collections:
@@ -131,7 +131,7 @@
     # Workflows
     - name: Pull workflow templates from AAP Controller
       set_fact:
-        workflow_results: "{{ query('awx.awx.controller_api', 'workflow_templates', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
+        workflow_results: "{{ query('awx.awx.controller_api', 'workflow_job_templates', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
     - name: Export workflow templates to YAML
