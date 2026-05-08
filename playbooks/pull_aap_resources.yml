@@ -43,6 +43,7 @@
     - name: Pull organizations from AAP Controller
       ansible.controller.organization:
         controller_host: "{{ aap_controller_host }}"
+        aap_token: "{{ aap_controller_token }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item }}"
@@ -60,6 +61,7 @@
     - name: Pull users from AAP Controller
       ansible.controller.user:
         controller_host: "{{ aap_controller_host }}"
+        aap_token: "{{ aap_controller_token }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         username: "{{ item.username }}"
@@ -77,6 +79,7 @@
     - name: Pull teams from AAP Controller
       ansible.controller.team:
         controller_host: "{{ aap_controller_host }}"
+        aap_token: "{{ aap_controller_token }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
@@ -110,6 +113,7 @@
     - name: Pull projects from AAP Controller
       ansible.controller.project:
         controller_host: "{{ aap_controller_host }}"
+        aap_token: "{{ aap_controller_token }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
@@ -130,6 +134,7 @@
     - name: Pull inventories from AAP Controller
       ansible.controller.inventory:
         controller_host: "{{ aap_controller_host }}"
+        aap_token: "{{ aap_controller_token }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
@@ -148,6 +153,7 @@
     - name: Pull job templates from AAP Controller
       ansible.controller.job_template:
         controller_host: "{{ aap_controller_host }}"
+        aap_token: "{{ aap_controller_token }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
@@ -166,6 +172,7 @@
     - name: Pull workflow templates from AAP Controller
       ansible.controller.workflow_job_template:
         controller_host: "{{ aap_controller_host }}"
+        aap_token: "{{ aap_controller_token }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
@@ -184,6 +191,7 @@
     - name: Pull notification templates from AAP Controller
       ansible.controller.notification_template:
         controller_host: "{{ aap_controller_host }}"
+        aap_token: "{{ aap_controller_token }}"
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
