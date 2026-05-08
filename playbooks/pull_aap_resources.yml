@@ -207,6 +207,8 @@
         git push origin main
       args:
         chdir: /tmp/cac_repo
+      environment:
+        GIT_TERMINAL_PROMPT: "0"  # Forces Git to fail instead of hanging!
       register: git_result
       failed_when: 
         - git_result.rc != 0
