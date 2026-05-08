@@ -16,14 +16,14 @@
 
   pre_tasks:
     - name: Validate required environment variables
-      assert:
+      ansible.builtin.assert:
         that:
           - aap_controller_username is defined
           - aap_controller_password is defined
         fail_msg: "AAP_USERNAME and AAP_PASSWORD environment variables must be set"
 
     - name: Create output directory structure
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         state: directory
         mode: '0755'
@@ -54,14 +54,14 @@
       ignore_errors: true
 
     - name: Export organizations to YAML
-      copy:
+      ansible.builtin.copy:
         content: "{{ org_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/organizations/organizations_{{ timestamp }}.yml"
       when: org_results is defined
 
     # Users
     - name: Pull users from AAP Controller
-      user:
+      unsible.controller.user:
         controller_host: "{{ aap_controller_host }}"
         controller_username: "{{ aap_controller_username }}"
         controller_password: "{{ aap_controller_password }}"
@@ -73,14 +73,14 @@
       ignore_errors: true
 
     - name: Export users to YAML
-      copy:
+      ansible.builtin.copy:
         content: "{{ user_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/users/users_{{ timestamp }}.yml"
       when: user_results is defined
 
     # Teams
     - name: Pull teams from AAP Controller
-      team:
+      ansible.controller.team:
         controller_host: "{{ aap_controller_host }}"
         controller_username: "{{ aap_controller_username }}"
         controller_password: "{{ aap_controller_password }}"
@@ -93,7 +93,7 @@
       ignore_errors: true
 
     - name: Export teams to YAML
-      copy:
+      ansible.builtin.copy:
         content: "{{ team_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/teams/teams_{{ timestamp }}.yml"
       when: team_results is defined
@@ -101,10 +101,10 @@
     # Credentials (without sensitive data)
     - name: Pull credentials metadata from AAP Controller
       set_fact:
-        credentials_list: "{{ query('awx.awx.controller_api', 'credentials', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
+        ansible.controller.credentials_list: "{{ query('awx.awx.controller_api', 'credentials', host=aap_controller_host, username=aap_controller_username, password=aap_controller_password, verify_ssl=aap_controller_validate_certs) }}"
 
     - name: Export credential metadata to YAML
-      copy:
+      ansible.builtin.copy:
         content: |
           ---
           # Credentials (sensitive data excluded)
@@ -115,7 +115,7 @@
 
     # Projects
     - name: Pull projects from AAP Controller
-      project:
+      ansible.controller.project:
         controller_host: "{{ aap_controller_host }}"
         controller_username: "{{ aap_controller_username }}"
         controller_password: "{{ aap_controller_password }}"
@@ -130,14 +130,14 @@
       ignore_errors: true
 
     - name: Export projects to YAML
-      copy:
+      ansible.builtin.copy:
         content: "{{ project_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/projects/projects_{{ timestamp }}.yml"
       when: project_results is defined
 
     # Inventories
     - name: Pull inventories from AAP Controller
-      inventory:
+      ansible.controller.inventory:
         controller_host: "{{ aap_controller_host }}"
         controller_username: "{{ aap_controller_username }}"
         controller_password: "{{ aap_controller_password }}"
@@ -150,14 +150,14 @@
       ignore_errors: true
 
     - name: Export inventories to YAML
-      copy:
+      ansible.builtin.copy:
         content: "{{ inventory_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/inventories/inventories_{{ timestamp }}.yml"
       when: inventory_results is defined
 
     # Job Templates
     - name: Pull job templates from AAP Controller
-      job_template:
+      ansible.controller.job_template:
         controller_host: "{{ aap_controller_host }}"
         controller_username: "{{ aap_controller_username }}"
         controller_password: "{{ aap_controller_password }}"
@@ -170,7 +170,7 @@
       ignore_errors: true
 
     - name: Export job templates to YAML
-      copy:
+      ansible.builtin.copy:
         content: "{{ job_template_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/job_templates/job_templates_{{ timestamp }}.yml"
       when: job_template_results is defined
@@ -190,14 +190,14 @@
       ignore_errors: true
 
     - name: Export workflow templates to YAML
-      copy:
+      ansible.builtin.copy:
         content: "{{ workflow_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/workflows/workflows_{{ timestamp }}.yml"
       when: workflow_results is defined
 
     # Notification Templates
     - name: Pull notification templates from AAP Controller
-      notification_template:
+      ansible.controller.notification_template:
         controller_host: "{{ aap_controller_host }}"
         controller_username: "{{ aap_controller_username }}"
         controller_password: "{{ aap_controller_password }}"
@@ -209,14 +209,14 @@
       ignore_errors: true
 
     - name: Export notification templates to YAML
-      copy:
+      ansible.builtin.copy:
         content: "{{ notification_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/notification_templates/notifications_{{ timestamp }}.yml"
       when: notification_results is defined
 
   post_tasks:
     - name: Create summary report
-      copy:
+      ansible.builtin.copy:
         content: |
           # AAP Resource Export Summary
           Generated: {{ ansible_date_time.iso8601 }}
@@ -243,5 +243,5 @@
         dest: "{{ iac_output_dir }}/EXPORT_SUMMARY_{{ timestamp }}.md"
 
     - name: Display export summary
-      debug:
+      ansible.builtin.debug:
         msg: "AAP resources exported to {{ iac_output_dir }}"
