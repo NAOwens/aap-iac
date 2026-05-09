@@ -6,7 +6,7 @@
   vars:
     aap_controller_host: "{{ lookup('env', 'CONTROLLER_HOST') }}"
     aap_controller_token: "{{ lookup ('env', 'CONTROLLER_OAUTH_TOKEN') }}"
-    aap_controller_validate_certs: "{{ validate_certs | default(true) }}"
+    aap_controller_validate_certs: "{{ validate_certs | default(false) }}"
     playbook_dir: "NAOwens/aap-iac"
     iac_output_dir: "./iac-exports"
     timestamp: "{{ ansible_date_time.iso8601_basic_short }}"
