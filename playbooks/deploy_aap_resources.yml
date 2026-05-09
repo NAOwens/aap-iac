@@ -1,7 +1,8 @@
 ---
 - name: Deploy AAP Resources from Infrastructure as Code
   hosts: localhost
-  gather_facts: true
+  connection: local
+  gather_facts: false
   vars:
     aap_controller_host: "{{ lookup('env', 'CONTROLLER_HOST') }}"
     aap_controller_token: "{{ lookup ('env', 'CONTROLLER_OAUTH_TOKEN') }}"
