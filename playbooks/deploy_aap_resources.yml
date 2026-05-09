@@ -4,15 +4,11 @@
   connection: local
   gather_facts: false
   vars:
-    #aap_controller_host: "{{ lookup('env', 'CONTROLLER_HOST') }}"
-    #aap_controller_token: "{{ lookup('env', 'CONTROLLER_OAUTH_TOKEN') }}"
-    #aap_controller_validate_certs: "{{ validate_certs | default(false) }}"
-    
     # GitHub Repository Settings
     git_repo_url: "https://github.com/NAOwens/aap-iac.git"
     git_clone_dest: "/tmp/aap-iac"
     
-    # Updated source directory to point to the cloned repo
+    # Source directory pointing to the cloned repo
     iac_source_dir: "{{ git_clone_dest }}/iac-exports"
 
   collections:
@@ -20,18 +16,12 @@
     - ansible.controller
 
   pre_tasks:
-    #- name: Validate required environment variables
-    #  ansible.builtin.assert:
-    #    that:
-    #      - aap_controller_token is defined and aap_controller_token != ''
-    #    fail_msg: "AAP_TOKEN environment variable must be set"
-
     - name: Clone IaC repository from GitHub
       ansible.builtin.git:
         repo: "{{ git_repo_url }}"
         dest: "{{ git_clone_dest }}"
         version: "main"
-        force: true # Ensures a fresh pull even if the directory already exists
+        force: true
         
     - name: Check IaC source directory exists in cloned repo
       ansible.builtin.stat:
@@ -50,9 +40,6 @@
 
     - name: Create or update organizations
       ansible.controller.organization:
-        controller_host: "{{ aap_controller_host }}"
-        controller_oauthtoken: "{{ aap_controller_token }}"
-        validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
         description: "{{ item.description | default(omit) }}"
@@ -70,9 +57,6 @@
 
     - name: Create or update users
       ansible.controller.user:
-        controller_host: "{{ aap_controller_host }}"
-        controller_oauthtoken: "{{ aap_controller_token }}"
-        validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         username: "{{ item.username }}"
         email: "{{ item.email | default(omit) }}"
@@ -92,9 +76,6 @@
 
     - name: Create or update teams
       ansible.controller.team:
-        controller_host: "{{ aap_controller_host }}"
-        controller_oauthtoken: "{{ aap_controller_token }}"
-        validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
         organization: "{{ item.organization | default(omit) }}"
@@ -113,9 +94,6 @@
 
     - name: Create or update projects
       ansible.controller.project:
-        controller_host: "{{ aap_controller_host }}"
-        controller_oauthtoken: "{{ aap_controller_token }}"
-        validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
         organization: "{{ item.organization | default(omit) }}"
@@ -136,9 +114,6 @@
 
     - name: Create or update inventories
       ansible.controller.inventory:
-        controller_host: "{{ aap_controller_host }}"
-        controller_oauthtoken: "{{ aap_controller_token }}"
-        validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
         organization: "{{ item.organization | default(omit) }}"
@@ -157,9 +132,6 @@
 
     - name: Create or update job templates
       ansible.controller.job_template:
-        controller_host: "{{ aap_controller_host }}"
-        controller_oauthtoken: "{{ aap_controller_token }}"
-        validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
         organization: "{{ item.organization | default(omit) }}"
@@ -180,9 +152,6 @@
 
     - name: Create or update workflow templates
       ansible.controller.workflow_job_template:
-        controller_host: "{{ aap_controller_host }}"
-        controller_oauthtoken: "{{ aap_controller_token }}"
-        validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
         organization: "{{ item.organization | default(omit) }}"
@@ -201,9 +170,6 @@
 
     - name: Create or update notification templates
       ansible.controller.notification_template:
-        controller_host: "{{ aap_controller_host }}"
-        controller_oauthtoken: "{{ aap_controller_token }}"
-        validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
         notification_type: "{{ item.notification_type | default(omit) }}"
@@ -216,11 +182,11 @@
       ansible.builtin.debug:
         msg: |
           Deployment Summary:
-          - Organizations created/updated: {{ org_deploy.results | length | default(0) }}
-          - Users created/updated: {{ user_deploy.results | length | default(0) }}
-          - Teams created/updated: {{ team_deploy.results | length | default(0) }}
-          - Projects created/updated: {{ project_deploy.results | length | default(0) }}
-          - Inventories created/updated: {{ inventory_deploy.results | length | default(0) }}
-          - Job Templates created/updated: {{ job_template_deploy.results | length | default(0) }}
-          - Workflow Templates created/updated: {{ workflow_deploy.results | length | default(0) }}
-          - Notification Templates created/updated: {{ notification_deploy.results | length | default(0) }}
+          - Organizations created/updated: {{ org_deploy.results | length if org_deploy.results is defined else 0 }}
+          - Users created/updated: {{ user_deploy.results | length if user_deploy.results is defined else 0 }}
+          - Teams created/updated: {{ team_deploy.results | length if team_deploy.results is defined else 0 }}
+          - Projects created/updated: {{ project_deploy.results | length if project_deploy.results is defined else 0 }}
+          - Inventories created/updated: {{ inventory_deploy.results | length if inventory_deploy.results is defined else 0 }}
+          - Job Templates created/updated: {{ job_template_deploy.results | length if job_template_deploy.results is defined else 0 }}
+          - Workflow Templates created/updated: {{ workflow_deploy.results | length if workflow_deploy.results is defined else 0 }}
+          - Notification Templates created/updated: {{ notification_deploy.results | length if notification_deploy.results is defined else 0 }}
