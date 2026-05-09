@@ -816,11 +816,7 @@
     description: ''
     diff_mode: false
     execution_environment: null
-    extra_vars: '---
-
-        #aap_controller_url: ''https://aap.ofam.dev''
-
-        validate_certs: ''false'''
+    extra_vars: '---'
     force_handlers: false
     forks: 0
     host_config_key: ''
