@@ -9,7 +9,6 @@
     aap_controller_validate_certs: "{{ validate_certs | default(false) }}"
     
     # GitHub Repository Settings
-    # If the repo is private, add your token: "https://NAOwens:{{ my_github_token }}@github.com/NAOwens/aap-iac.git"
     git_repo_url: "https://github.com/NAOwens/aap-iac.git"
     git_clone_dest: "/tmp/aap-iac"
     
@@ -41,10 +40,12 @@
       failed_when: not iac_dir.stat.exists
 
   tasks:
+    # ---------------------------------------------------------
+    # ORGANIZATIONS
+    # ---------------------------------------------------------
     - name: Load organization definitions
-      ansible.builtin.include_vars:
-        file: "{{ iac_source_dir }}/organizations/organizations.yml"
-        name: organizations
+      ansible.builtin.set_fact:
+        organizations: "{{ lookup('file', iac_source_dir ~ '/organizations/organizations.yml', errors='ignore') | default('[]', true) | from_yaml }}"
       ignore_errors: true
 
     - name: Create or update organizations
@@ -59,10 +60,12 @@
       register: org_deploy
       ignore_errors: true
 
+    # ---------------------------------------------------------
+    # USERS
+    # ---------------------------------------------------------
     - name: Load user definitions
-      ansible.builtin.include_vars:
-        file: "{{ iac_source_dir }}/users/users.yml"
-        name: users
+      ansible.builtin.set_fact:
+        users: "{{ lookup('file', iac_source_dir ~ '/users/users.yml', errors='ignore') | default('[]', true) | from_yaml }}"
       ignore_errors: true
 
     - name: Create or update users
@@ -79,10 +82,12 @@
       register: user_deploy
       ignore_errors: true
 
+    # ---------------------------------------------------------
+    # TEAMS
+    # ---------------------------------------------------------
     - name: Load team definitions
-      ansible.builtin.include_vars:
-        file: "{{ iac_source_dir }}/teams/teams.yml"
-        name: teams
+      ansible.builtin.set_fact:
+        teams: "{{ lookup('file', iac_source_dir ~ '/teams/teams.yml', errors='ignore') | default('[]', true) | from_yaml }}"
       ignore_errors: true
 
     - name: Create or update teams
@@ -92,16 +97,18 @@
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
-        organization: "{{ item.organization }}"
+        organization: "{{ item.organization | default(omit) }}"
         description: "{{ item.description | default(omit) }}"
       loop: "{{ teams | default([]) }}"
       register: team_deploy
       ignore_errors: true
 
+    # ---------------------------------------------------------
+    # PROJECTS
+    # ---------------------------------------------------------
     - name: Load project definitions
-      ansible.builtin.include_vars:
-        file: "{{ iac_source_dir }}/projects/projects.yml"
-        name: projects
+      ansible.builtin.set_fact:
+        projects: "{{ lookup('file', iac_source_dir ~ '/projects/projects.yml', errors='ignore') | default('[]', true) | from_yaml }}"
       ignore_errors: true
 
     - name: Create or update projects
@@ -111,7 +118,7 @@
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
-        organization: "{{ item.organization }}"
+        organization: "{{ item.organization | default(omit) }}"
         scm_type: "{{ item.scm_type | default('') }}"
         scm_url: "{{ item.scm_url | default('') }}"
         scm_branch: "{{ item.scm_branch | default('main') }}"
@@ -119,10 +126,12 @@
       register: project_deploy
       ignore_errors: true
 
+    # ---------------------------------------------------------
+    # INVENTORIES
+    # ---------------------------------------------------------
     - name: Load inventory definitions
-      ansible.builtin.include_vars:
-        file: "{{ iac_source_dir }}/inventories/inventories.yml"
-        name: inventories
+      ansible.builtin.set_fact:
+        inventories: "{{ lookup('file', iac_source_dir ~ '/inventories/inventories.yml', errors='ignore') | default('[]', true) | from_yaml }}"
       ignore_errors: true
 
     - name: Create or update inventories
@@ -132,16 +141,18 @@
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
-        organization: "{{ item.organization }}"
+        organization: "{{ item.organization | default(omit) }}"
         description: "{{ item.description | default(omit) }}"
       loop: "{{ inventories | default([]) }}"
       register: inventory_deploy
       ignore_errors: true
 
+    # ---------------------------------------------------------
+    # JOB TEMPLATES
+    # ---------------------------------------------------------
     - name: Load job template definitions
-      ansible.builtin.include_vars:
-        file: "{{ iac_source_dir }}/job_templates/job_templates.yml"
-        name: job_templates
+      ansible.builtin.set_fact:
+        job_templates: "{{ lookup('file', iac_source_dir ~ '/job_templates/job_templates.yml', errors='ignore') | default('[]', true) | from_yaml }}"
       ignore_errors: true
 
     - name: Create or update job templates
@@ -151,7 +162,7 @@
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
-        organization: "{{ item.organization }}"
+        organization: "{{ item.organization | default(omit) }}"
         project: "{{ item.project | default(omit) }}"
         playbook: "{{ item.playbook | default(omit) }}"
         inventory: "{{ item.inventory | default(omit) }}"
@@ -159,10 +170,12 @@
       register: job_template_deploy
       ignore_errors: true
 
+    # ---------------------------------------------------------
+    # WORKFLOW TEMPLATES
+    # ---------------------------------------------------------
     - name: Load workflow template definitions
-      ansible.builtin.include_vars:
-        file: "{{ iac_source_dir }}/workflows/workflows.yml"
-        name: workflows
+      ansible.builtin.set_fact:
+        workflows: "{{ lookup('file', iac_source_dir ~ '/workflows/workflows.yml', errors='ignore') | default('[]', true) | from_yaml }}"
       ignore_errors: true
 
     - name: Create or update workflow templates
@@ -172,16 +185,18 @@
         validate_certs: "{{ aap_controller_validate_certs }}"
         state: present
         name: "{{ item.name }}"
-        organization: "{{ item.organization }}"
+        organization: "{{ item.organization | default(omit) }}"
         description: "{{ item.description | default(omit) }}"
       loop: "{{ workflows | default([]) }}"
       register: workflow_deploy
       ignore_errors: true
 
+    # ---------------------------------------------------------
+    # NOTIFICATION TEMPLATES
+    # ---------------------------------------------------------
     - name: Load notification template definitions
-      ansible.builtin.include_vars:
-        file: "{{ iac_source_dir }}/notification_templates/notifications.yml"
-        name: notifications
+      ansible.builtin.set_fact:
+        notifications: "{{ lookup('file', iac_source_dir ~ '/notification_templates/notifications.yml', errors='ignore') | default('[]', true) | from_yaml }}"
       ignore_errors: true
 
     - name: Create or update notification templates
