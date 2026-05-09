@@ -5,9 +5,16 @@
   gather_facts: false
   vars:
     aap_controller_host: "{{ lookup('env', 'CONTROLLER_HOST') }}"
-    aap_controller_token: "{{ lookup ('env', 'CONTROLLER_OAUTH_TOKEN') }}"
+    aap_controller_token: "{{ lookup('env', 'CONTROLLER_OAUTH_TOKEN') }}"
     aap_controller_validate_certs: "{{ validate_certs | default(false) }}"
-    iac_source_dir: "./iac-exports"
+    
+    # GitHub Repository Settings
+    # If the repo is private, add your token: "https://NAOwens:{{ my_github_token }}@github.com/NAOwens/aap-iac.git"
+    git_repo_url: "https://github.com/NAOwens/aap-iac.git"
+    git_clone_dest: "/tmp/aap-iac"
+    
+    # Updated source directory to point to the cloned repo
+    iac_source_dir: "{{ git_clone_dest }}/iac-exports"
 
   collections:
     - awx.awx
@@ -20,7 +27,14 @@
           - aap_controller_token is defined and aap_controller_token != ''
         fail_msg: "AAP_TOKEN environment variable must be set"
 
-    - name: Check IaC source directory exists
+    - name: Clone IaC repository from GitHub
+      ansible.builtin.git:
+        repo: "{{ git_repo_url }}"
+        dest: "{{ git_clone_dest }}"
+        version: "main"
+        force: true # Ensures a fresh pull even if the directory already exists
+        
+    - name: Check IaC source directory exists in cloned repo
       ansible.builtin.stat:
         path: "{{ iac_source_dir }}"
       register: iac_dir
@@ -31,6 +45,7 @@
       ansible.builtin.include_vars:
         file: "{{ iac_source_dir }}/organizations/organizations_latest.yml"
         name: organizations
+      ignore_errors: true
 
     - name: Create or update organizations
       ansible.controller.organization:
