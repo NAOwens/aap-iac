@@ -9,7 +9,6 @@
     aap_controller_validate_certs: "{{ validate_certs | default(false) }}"
     playbook_dir: "NAOwens/aap-iac"
     iac_output_dir: "./iac-exports"
-    timestamp: "{{ ansible_date_time.iso8601_basic_short }}"
     git_token_variable: "{{ github_token }}"
 
   collections:
@@ -50,7 +49,7 @@
     - name: Export organizations to YAML
       ansible.builtin.copy:
         content: "{{ org_results | to_nice_yaml }}"
-        dest: "{{ iac_output_dir }}/organizations/organizations_{{ timestamp }}.yml"
+        dest: "{{ iac_output_dir }}/organizations/organizations.yml"
       when: org_results is defined and org_results | length > 0
 
     # Users
@@ -62,7 +61,7 @@
     - name: Export users to YAML
       ansible.builtin.copy:
         content: "{{ user_results | to_nice_yaml }}"
-        dest: "{{ iac_output_dir }}/users/users_{{ timestamp }}.yml"
+        dest: "{{ iac_output_dir }}/users/users.yml"
       when: user_results is defined and user_results | length > 0
 
     # Teams
@@ -74,7 +73,7 @@
     - name: Export teams to YAML
       ansible.builtin.copy:
         content: "{{ team_results | to_nice_yaml }}"
-        dest: "{{ iac_output_dir }}/teams/teams_{{ timestamp }}.yml"
+        dest: "{{ iac_output_dir }}/teams/teams.yml"
       when: team_results is defined and team_results | length > 0
 
     # Credentials (without sensitive data)
@@ -90,7 +89,7 @@
           # Credentials (sensitive data excluded)
           # Re-create credentials with sensitive values in a secure manner
           {{ credentials_list | to_nice_yaml }}
-        dest: "{{ iac_output_dir }}/credentials/credentials_metadata_{{ timestamp }}.yml"
+        dest: "{{ iac_output_dir }}/credentials/credentials_metadata.yml"
       when: credentials_list is defined and credentials_list | length > 0
 
     # Projects
@@ -102,7 +101,7 @@
     - name: Export projects to YAML
       ansible.builtin.copy:
         content: "{{ project_results | to_nice_yaml }}"
-        dest: "{{ iac_output_dir }}/projects/projects_{{ timestamp }}.yml"
+        dest: "{{ iac_output_dir }}/projects/projects.yml"
       when: project_results is defined and project_results | length > 0
 
     # Inventories
@@ -114,7 +113,7 @@
     - name: Export inventories to YAML
       ansible.builtin.copy:
         content: "{{ inventory_results | to_nice_yaml }}"
-        dest: "{{ iac_output_dir }}/inventories/inventories_{{ timestamp }}.yml"
+        dest: "{{ iac_output_dir }}/inventories/inventories.yml"
       when: inventory_results is defined and inventory_results | length > 0
 
     # Job Templates
@@ -126,7 +125,7 @@
     - name: Export job templates to YAML
       ansible.builtin.copy:
         content: "{{ job_template_results | to_nice_yaml }}"
-        dest: "{{ iac_output_dir }}/job_templates/job_templates_{{ timestamp }}.yml"
+        dest: "{{ iac_output_dir }}/job_templates/job_templates.yml"
       when: job_template_results is defined and job_template_results | length > 0
 
     # Workflows
@@ -138,7 +137,7 @@
     - name: Export workflow templates to YAML
       ansible.builtin.copy:
         content: "{{ workflow_results | to_nice_yaml }}"
-        dest: "{{ iac_output_dir }}/workflows/workflows_{{ timestamp }}.yml"
+        dest: "{{ iac_output_dir }}/workflows/workflows.yml"
       when: workflow_results is defined and workflow_results | length > 0
 
     # Notification Templates
@@ -150,7 +149,7 @@
     - name: Export notification templates to YAML
       ansible.builtin.copy:
         content: "{{ notification_results | to_nice_yaml }}"
-        dest: "{{ iac_output_dir }}/notification_templates/notifications_{{ timestamp }}.yml"
+        dest: "{{ iac_output_dir }}/notification_templates/notifications.yml"
       when: notification_results is defined and notification_results | length > 0
 
   post_tasks:
@@ -179,7 +178,7 @@
           - Sensitive credential data (passwords, API tokens) is not exported for security
           - Credentials must be re-created with sensitive values in a secure manner
           - Review and commit exported files to version control
-        dest: "{{ iac_output_dir }}/EXPORT_SUMMARY_{{ timestamp }}.md"
+        dest: "{{ iac_output_dir }}/EXPORT_SUMMARY.md"
 
     - name: Display export summary
       ansible.builtin.debug:
