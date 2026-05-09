@@ -20,11 +20,11 @@
     - ansible.controller
 
   pre_tasks:
-    - name: Validate required environment variables
-      ansible.builtin.assert:
-        that:
-          - aap_controller_token is defined and aap_controller_token != ''
-        fail_msg: "AAP_TOKEN environment variable must be set"
+    #- name: Validate required environment variables
+    #  ansible.builtin.assert:
+    #    that:
+    #      - aap_controller_token is defined and aap_controller_token != ''
+    #    fail_msg: "AAP_TOKEN environment variable must be set"
 
     - name: Clone IaC repository from GitHub
       ansible.builtin.git:
