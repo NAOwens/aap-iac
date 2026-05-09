@@ -1,0 +1,168 @@
+-   created: '2024-08-05T21:30:22.538134Z'
+    description: servers not in Satellite
+    has_active_failures: false
+    has_inventory_sources: false
+    host_filter: null
+    hosts_with_active_failures: 0
+    id: 5
+    inventory_sources_with_failures: 0
+    kind: ''
+    modified: '2024-08-05T21:30:22.538144Z'
+    name: Homelab
+    organization: 2
+    pending_deletion: false
+    prevent_instance_group_fallback: false
+    related:
+        access_list: /api/v2/inventories/5/access_list/
+        activity_stream: /api/v2/inventories/5/activity_stream/
+        ad_hoc_commands: /api/v2/inventories/5/ad_hoc_commands/
+        copy: /api/v2/inventories/5/copy/
+        created_by: /api/v2/users/1/
+        groups: /api/v2/inventories/5/groups/
+        hosts: /api/v2/inventories/5/hosts/
+        instance_groups: /api/v2/inventories/5/instance_groups/
+        inventory_sources: /api/v2/inventories/5/inventory_sources/
+        job_templates: /api/v2/inventories/5/job_templates/
+        labels: /api/v2/inventories/5/labels/
+        modified_by: /api/v2/users/1/
+        object_roles: /api/v2/inventories/5/object_roles/
+        organization: /api/v2/organizations/2/
+        root_groups: /api/v2/inventories/5/root_groups/
+        script: /api/v2/inventories/5/script/
+        tree: /api/v2/inventories/5/tree/
+        update_inventory_sources: /api/v2/inventories/5/update_inventory_sources/
+        variable_data: /api/v2/inventories/5/variable_data/
+    summary_fields:
+        created_by:
+            first_name: ''
+            id: 1
+            last_name: ''
+            username: admin
+        labels:
+            count: 0
+            results: []
+        modified_by:
+            first_name: ''
+            id: 1
+            last_name: ''
+            username: admin
+        object_roles:
+            adhoc_role:
+                description: May run ad hoc commands on the inventory
+                id: 150
+                name: Ad Hoc
+            admin_role:
+                description: Can manage all aspects of the inventory
+                id: 148
+                name: Admin
+            read_role:
+                description: May view settings for the inventory
+                id: 152
+                name: Read
+            update_role:
+                description: May update the inventory
+                id: 149
+                name: Update
+            use_role:
+                description: Can use the inventory in a job template
+                id: 151
+                name: Use
+        organization:
+            description: ''
+            id: 2
+            name: Ofam
+        user_capabilities:
+            adhoc: true
+            copy: true
+            delete: true
+            edit: true
+    total_groups: 0
+    total_hosts: 1
+    total_inventory_sources: 0
+    type: inventory
+    url: /api/v2/inventories/5/
+    variables: '---'
+-   created: '2023-10-31T22:15:58.512251Z'
+    description: ''
+    has_active_failures: true
+    has_inventory_sources: true
+    host_filter: null
+    hosts_with_active_failures: 1
+    id: 2
+    inventory_sources_with_failures: 0
+    kind: ''
+    modified: '2024-07-16T15:30:00.530711Z'
+    name: Satellite Ofam
+    organization: 2
+    pending_deletion: false
+    prevent_instance_group_fallback: false
+    related:
+        access_list: /api/v2/inventories/2/access_list/
+        activity_stream: /api/v2/inventories/2/activity_stream/
+        ad_hoc_commands: /api/v2/inventories/2/ad_hoc_commands/
+        copy: /api/v2/inventories/2/copy/
+        created_by: /api/v2/users/1/
+        groups: /api/v2/inventories/2/groups/
+        hosts: /api/v2/inventories/2/hosts/
+        instance_groups: /api/v2/inventories/2/instance_groups/
+        inventory_sources: /api/v2/inventories/2/inventory_sources/
+        job_templates: /api/v2/inventories/2/job_templates/
+        labels: /api/v2/inventories/2/labels/
+        modified_by: /api/v2/users/1/
+        object_roles: /api/v2/inventories/2/object_roles/
+        organization: /api/v2/organizations/2/
+        root_groups: /api/v2/inventories/2/root_groups/
+        script: /api/v2/inventories/2/script/
+        tree: /api/v2/inventories/2/tree/
+        update_inventory_sources: /api/v2/inventories/2/update_inventory_sources/
+        variable_data: /api/v2/inventories/2/variable_data/
+    summary_fields:
+        created_by:
+            first_name: ''
+            id: 1
+            last_name: ''
+            username: admin
+        labels:
+            count: 0
+            results: []
+        modified_by:
+            first_name: ''
+            id: 1
+            last_name: ''
+            username: admin
+        object_roles:
+            adhoc_role:
+                description: May run ad hoc commands on the inventory
+                id: 61
+                name: Ad Hoc
+            admin_role:
+                description: Can manage all aspects of the inventory
+                id: 59
+                name: Admin
+            read_role:
+                description: May view settings for the inventory
+                id: 63
+                name: Read
+            update_role:
+                description: May update the inventory
+                id: 60
+                name: Update
+            use_role:
+                description: Can use the inventory in a job template
+                id: 62
+                name: Use
+        organization:
+            description: ''
+            id: 2
+            name: Ofam
+        user_capabilities:
+            adhoc: true
+            copy: true
+            delete: true
+            edit: true
+    total_groups: 8
+    total_hosts: 8
+    total_inventory_sources: 1
+    type: inventory
+    url: /api/v2/inventories/2/
+    variables: '---'
