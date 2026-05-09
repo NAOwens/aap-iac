@@ -4,9 +4,9 @@
   connection: local
   gather_facts: false
   vars:
-    aap_controller_host: "{{ lookup('env', 'CONTROLLER_HOST') }}"
-    aap_controller_token: "{{ lookup('env', 'CONTROLLER_OAUTH_TOKEN') }}"
-    aap_controller_validate_certs: "{{ validate_certs | default(false) }}"
+    #aap_controller_host: "{{ lookup('env', 'CONTROLLER_HOST') }}"
+    #aap_controller_token: "{{ lookup('env', 'CONTROLLER_OAUTH_TOKEN') }}"
+    #aap_controller_validate_certs: "{{ validate_certs | default(false) }}"
     
     # GitHub Repository Settings
     git_repo_url: "https://github.com/NAOwens/aap-iac.git"
