@@ -121,12 +121,16 @@
         inventory_results: "{{ query('awx.awx.controller_api', 'inventories', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
-    - name: Map Organization IDs to Names for Inventories
+    - name: Map relational IDs to names for Inventories
       ansible.builtin.set_fact:
         inventory_results: >-
           [
             {% for item in inventory_results %}
-              {{ item | combine({'organization': item.summary_fields.organization.name | default(item.organization)}) | to_json }}
+              {{ 
+                item | combine({
+                  'organization': item.summary_fields.organization.name | default(item.organization)
+                }) | to_json 
+              }}
               {% if not loop.last %},{% endif %}
             {% endfor %}
           ]
@@ -144,12 +148,19 @@
         job_template_results: "{{ query('awx.awx.controller_api', 'job_templates', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
       ignore_errors: true
 
-    - name: Map Organization IDs to Names for Job Templates
+    - name: Map relational IDs to names for Job Templates
       ansible.builtin.set_fact:
         job_template_results: >-
           [
             {% for item in job_template_results %}
-              {{ item | combine({'organization': item.summary_fields.organization.name | default(item.organization)}) | to_json }}
+              {{ 
+                item | combine({
+                  'organization': item.summary_fields.organization.name | default(item.organization),
+                  'project': item.summary_fields.project.name | default(item.project),
+                  'inventory': item.summary_fields.inventory.name | default(item.inventory),
+                  'execution_environment': item.summary_fields.execution_environment.name | default(item.execution_environment)
+                }) | to_json 
+              }}
               {% if not loop.last %},{% endif %}
             {% endfor %}
           ]
