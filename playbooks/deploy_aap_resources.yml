@@ -54,7 +54,7 @@
 
     - name: Create or update organizations
       ansible.platform.organization:
-        aap_host: "{{ aap_host }}"
+        aap_hostname: "{{ aap_host }}"
         aap_token: "{{ my_auth_token }}"
         validate_certs: "{{ validate_certs_flag }}"
         state: present
@@ -74,7 +74,7 @@
 
     - name: Create or update users
       ansible.platform.user:
-        aap_host: "{{ aap_host }}"
+        aap_hostname: "{{ aap_host }}"
         aap_token: "{{ my_auth_token }}"
         validate_certs: "{{ validate_certs_flag }}"
         state: present
@@ -96,7 +96,7 @@
 
     - name: Create or update teams
       ansible.platform.team:
-        aap_host: "{{ aap_host }}"
+        aap_hostname: "{{ aap_host }}"
         aap_token: "{{ my_auth_token }}"
         validate_certs: "{{ validate_certs_flag }}"
         state: present
