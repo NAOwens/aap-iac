@@ -141,7 +141,62 @@
         content: "{{ inventory_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/inventories/inventories.yml"
       when: inventory_results is defined and inventory_results | length > 0
+      
+    # Inventory Sources
+    - name: Pull inventory sources from AAP Controller
+      set_fact:
+        inv_sources_results: "{{ query('awx.awx.controller_api', 'inventory_sources', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
+      ignore_errors: true
 
+    - name: Map relational IDs to names for Inventory Sources
+      ansible.builtin.set_fact:
+        inv_sources_results: >-
+          [
+            {% for item in inv_sources_results %}
+              {{ 
+                item | combine({
+                  'inventory': item.summary_fields.inventory.name | default(item.inventory),
+                  'credential': item.summary_fields.credential.name | default(item.credential)
+                }) | to_json 
+              }}
+              {% if not loop.last %},{% endif %}
+            {% endfor %}
+          ]
+      when: inv_sources_results is defined and inv_sources_results | length > 0
+
+    - name: Export inventory sources to YAML
+      ansible.builtin.copy:
+        content: "{{ inv_sources_results | to_nice_yaml }}"
+        dest: "{{ iac_output_dir }}/inventories/inventory_sources.yml"
+      when: inv_sources_results is defined and inv_sources_results | length > 0
+
+    # Static Hosts
+    - name: Pull static hosts from AAP Controller
+      set_fact:
+        hosts_results: "{{ query('awx.awx.controller_api', 'hosts', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
+      ignore_errors: true
+
+    - name: Map relational IDs to names for Hosts
+      ansible.builtin.set_fact:
+        hosts_results: >-
+          [
+            {% for item in hosts_results %}
+              {{ 
+                item | combine({
+                  'inventory': item.summary_fields.inventory.name | default(item.inventory)
+                }) | to_json 
+              }}
+              {% if not loop.last %},{% endif %}
+            {% endfor %}
+          ]
+      when: hosts_results is defined and hosts_results | length > 0
+
+    - name: Export hosts to YAML
+      ansible.builtin.copy:
+        content: "{{ hosts_results | to_nice_yaml }}"
+        dest: "{{ iac_output_dir }}/inventories/hosts.yml"
+      when: hosts_results is defined and hosts_results | length > 0
+    
     # Job Templates
     - name: Pull job templates from AAP Controller
       set_fact:
