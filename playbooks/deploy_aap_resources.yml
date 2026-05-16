@@ -214,9 +214,11 @@
         name: "{{ item.name }}"
         organization: "{{ item.organization | default(omit) }}"
         project: "{{ omit if not item.project else item.project }}"
-        execution_environment: "{{ omit if not item.execution_environment else item.execution_environment }}"
         playbook: "{{ item.playbook | default(omit) }}"
         inventory: "{{ omit if not item.inventory else item.inventory }}"
+        execution_environment: "{{ omit if not item.execution_environment else item.execution_environment }}"
+        # FIX: Force prompt on launch if no default inventory is set
+        ask_inventory_on_launch: "{{ true if not item.inventory else item.ask_inventory_on_launch | default(false) }}"
       loop: "{{ job_templates | default([]) }}"
       register: job_template_deploy
       ignore_errors: true
