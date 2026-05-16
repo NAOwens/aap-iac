@@ -4,8 +4,10 @@
   connection: local
   gather_facts: false
   vars:
-    # Using custom variable names to bypass AAP's internal callback collision
-    aap_host: "{{ aap_controller_url }}"
+    # Gateway URL based on your successful curl test
+    aap_host: "{{ new_aap_gateway_url }}"
+    
+    # Renamed variable to avoid built-in alias collisions
     my_auth_token: "{{ my_aap_token }}"
     validate_certs_flag: "{{ validate_certs | default(false) }}"
     
@@ -19,12 +21,13 @@
   collections:
     - awx.awx
     - ansible.controller
+    - ansible.platform
 
   pre_tasks:
     - name: Validate required environment variables
       ansible.builtin.assert:
         that:
-          - aap_token is defined and aap_token != ''
+          - my_auth_token is defined and my_auth_token != ''
         fail_msg: "AAP_TOKEN variable must be set via Extra Vars or a Custom Credential"
 
     - name: Clone IaC repository from GitHub
@@ -42,7 +45,7 @@
 
   tasks:
     # ---------------------------------------------------------
-    # ORGANIZATIONS
+    # ORGANIZATIONS (Gateway RBAC - ansible.platform)
     # ---------------------------------------------------------
     - name: Load organization definitions
       ansible.builtin.set_fact:
@@ -50,9 +53,9 @@
       ignore_errors: true
 
     - name: Create or update organizations
-      ansible.controller.organization:
-        controller_host: "{{ aap_host }}"
-        controller_oauthtoken: "{{ my_auth_token }}"
+      ansible.platform.organization:
+        aap_host: "{{ aap_host }}"
+        aap_token: "{{ my_auth_token }}"
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         name: "{{ item.name }}"
@@ -62,7 +65,7 @@
       ignore_errors: true
 
     # ---------------------------------------------------------
-    # USERS
+    # USERS (Gateway RBAC - ansible.platform)
     # ---------------------------------------------------------
     - name: Load user definitions
       ansible.builtin.set_fact:
@@ -70,9 +73,9 @@
       ignore_errors: true
 
     - name: Create or update users
-      ansible.controller.user:
-        controller_host: "{{ aap_host }}"
-        controller_oauthtoken: "{{ my_auth_token }}"
+      ansible.platform.user:
+        aap_host: "{{ aap_host }}"
+        aap_token: "{{ my_auth_token }}"
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         username: "{{ item.username }}"
@@ -84,7 +87,7 @@
       ignore_errors: true
 
     # ---------------------------------------------------------
-    # TEAMS
+    # TEAMS (Gateway RBAC - ansible.platform)
     # ---------------------------------------------------------
     - name: Load team definitions
       ansible.builtin.set_fact:
@@ -92,9 +95,9 @@
       ignore_errors: true
 
     - name: Create or update teams
-      ansible.controller.team:
-        controller_host: "{{ aap_host }}"
-        controller_oauthtoken: "{{ my_auth_token }}"
+      ansible.platform.team:
+        aap_host: "{{ aap_host }}"
+        aap_token: "{{ my_auth_token }}"
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         name: "{{ item.name }}"
@@ -105,7 +108,7 @@
       ignore_errors: true
 
     # ---------------------------------------------------------
-    # PROJECTS
+    # PROJECTS (Controller Execution - ansible.controller)
     # ---------------------------------------------------------
     - name: Load project definitions
       ansible.builtin.set_fact:
@@ -128,7 +131,7 @@
       ignore_errors: true
 
     # ---------------------------------------------------------
-    # INVENTORIES
+    # INVENTORIES (Controller Execution - ansible.controller)
     # ---------------------------------------------------------
     - name: Load inventory definitions
       ansible.builtin.set_fact:
@@ -149,7 +152,7 @@
       ignore_errors: true
 
     # ---------------------------------------------------------
-    # JOB TEMPLATES
+    # JOB TEMPLATES (Controller Execution - ansible.controller)
     # ---------------------------------------------------------
     - name: Load job template definitions
       ansible.builtin.set_fact:
@@ -172,7 +175,7 @@
       ignore_errors: true
 
     # ---------------------------------------------------------
-    # WORKFLOW TEMPLATES
+    # WORKFLOW TEMPLATES (Controller Execution - ansible.controller)
     # ---------------------------------------------------------
     - name: Load workflow template definitions
       ansible.builtin.set_fact:
@@ -193,7 +196,7 @@
       ignore_errors: true
 
     # ---------------------------------------------------------
-    # NOTIFICATION TEMPLATES
+    # NOTIFICATION TEMPLATES (Controller Execution - ansible.controller)
     # ---------------------------------------------------------
     - name: Load notification template definitions
       ansible.builtin.set_fact:
