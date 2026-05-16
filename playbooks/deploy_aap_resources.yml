@@ -6,7 +6,7 @@
   vars:
     # Using custom variable names to bypass AAP's internal callback collision
     aap_host: "{{ aap_controller_url }}"
-    aap_token: "{{ AAP_TOKEN }}"
+    aap_token: "{{ my_aap_token }}"
     validate_certs_flag: "{{ validate_certs | default(false) }}"
     
     # GitHub Repository Settings
