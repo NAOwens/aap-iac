@@ -6,7 +6,7 @@
   vars:
     # Using custom variable names to bypass AAP's internal callback collision
     aap_host: "{{ aap_controller_url }}"
-    aap_token: "{{ my_aap_token }}"
+    my_auth_token: "{{ my_aap_token }}"
     validate_certs_flag: "{{ validate_certs | default(false) }}"
     
     # GitHub Repository Settings
@@ -52,7 +52,7 @@
     - name: Create or update organizations
       ansible.controller.organization:
         controller_host: "{{ aap_host }}"
-        controller_oauthtoken: "{{ aap_token }}"
+        controller_oauthtoken: "{{ my_auth_token }}"
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         name: "{{ item.name }}"
@@ -72,7 +72,7 @@
     - name: Create or update users
       ansible.controller.user:
         controller_host: "{{ aap_host }}"
-        controller_oauthtoken: "{{ aap_token }}"
+        controller_oauthtoken: "{{ my_auth_token }}"
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         username: "{{ item.username }}"
@@ -94,7 +94,7 @@
     - name: Create or update teams
       ansible.controller.team:
         controller_host: "{{ aap_host }}"
-        controller_oauthtoken: "{{ aap_token }}"
+        controller_oauthtoken: "{{ my_auth_token }}"
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         name: "{{ item.name }}"
@@ -115,7 +115,7 @@
     - name: Create or update projects
       ansible.controller.project:
         controller_host: "{{ aap_host }}"
-        controller_oauthtoken: "{{ aap_token }}"
+        controller_oauthtoken: "{{ my_auth_token }}"
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         name: "{{ item.name }}"
@@ -138,7 +138,7 @@
     - name: Create or update inventories
       ansible.controller.inventory:
         controller_host: "{{ aap_host }}"
-        controller_oauthtoken: "{{ aap_token }}"
+        controller_oauthtoken: "{{ my_auth_token }}"
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         name: "{{ item.name }}"
@@ -159,7 +159,7 @@
     - name: Create or update job templates
       ansible.controller.job_template:
         controller_host: "{{ aap_host }}"
-        controller_oauthtoken: "{{ aap_token }}"
+        controller_oauthtoken: "{{ my_auth_token }}"
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         name: "{{ item.name }}"
@@ -182,7 +182,7 @@
     - name: Create or update workflow templates
       ansible.controller.workflow_job_template:
         controller_host: "{{ aap_host }}"
-        controller_oauthtoken: "{{ aap_token }}"
+        controller_oauthtoken: "{{ my_auth_token }}"
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         name: "{{ item.name }}"
@@ -203,7 +203,7 @@
     - name: Create or update notification templates
       ansible.controller.notification_template:
         controller_host: "{{ aap_host }}"
-        controller_oauthtoken: "{{ aap_token }}"
+        controller_oauthtoken: "{{ my_auth_token }}"
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         name: "{{ item.name }}"
