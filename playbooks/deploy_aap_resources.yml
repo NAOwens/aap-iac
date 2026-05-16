@@ -150,6 +150,52 @@
       loop: "{{ inventories | default([]) }}"
       register: inventory_deploy
       ignore_errors: true
+      
+    # ---------------------------------------------------------
+    # INVENTORY SOURCES
+    # ---------------------------------------------------------
+    - name: Load inventory source definitions
+      ansible.builtin.set_fact:
+        inventory_sources: "{{ lookup('file', iac_source_dir ~ '/inventories/inventory_sources.yml', errors='ignore') | default('[]', true) | from_yaml }}"
+      ignore_errors: true
+
+    - name: Create or update inventory sources
+      ansible.controller.inventory_source:
+        controller_host: "{{ aap_host }}"
+        controller_oauthtoken: "{{ my_auth_token }}"
+        validate_certs: "{{ validate_certs_flag }}"
+        state: present
+        name: "{{ item.name }}"
+        inventory: "{{ item.inventory }}"
+        source: "{{ item.source }}"
+        source_path: "{{ item.source_path | default(omit) }}"
+        credential: "{{ item.credential | default(omit) }}"
+        update_on_launch: "{{ item.update_on_launch | default(omit) }}"
+      loop: "{{ inventory_sources | default([]) }}"
+      register: inv_source_deploy
+      ignore_errors: true
+
+    # ---------------------------------------------------------
+    # STATIC HOSTS
+    # ---------------------------------------------------------
+    - name: Load host definitions
+      ansible.builtin.set_fact:
+        hosts: "{{ lookup('file', iac_source_dir ~ '/inventories/hosts.yml', errors='ignore') | default('[]', true) | from_yaml }}"
+      ignore_errors: true
+
+    - name: Create or update hosts
+      ansible.controller.host:
+        controller_host: "{{ aap_host }}"
+        controller_oauthtoken: "{{ my_auth_token }}"
+        validate_certs: "{{ validate_certs_flag }}"
+        state: present
+        name: "{{ item.name }}"
+        inventory: "{{ item.inventory }}"
+        description: "{{ item.description | default(omit) }}"
+        variables: "{{ item.variables | default(omit) }}"
+      loop: "{{ hosts | default([]) }}"
+      register: host_deploy
+      ignore_errors: true
 
     # ---------------------------------------------------------
     # JOB TEMPLATES (Controller Execution - ansible.controller)
