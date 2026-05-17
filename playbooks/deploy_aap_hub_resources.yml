@@ -17,7 +17,7 @@
     iac_source_dir: "{{ git_clone_dest }}/iac-hub-exports"
 
   collections:
-    - ansible.ah
+    - ansible.hub
 
   pre_tasks:
     - name: Validate required extra_vars
