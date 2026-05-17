@@ -1,0 +1,677 @@
+-   created_at: '2023-10-31T19:37:24.011275Z'
+    description: null
+    id: 955f3614-1ae2-40a7-8090-d96d4b035ea0
+    name: ee-minimal-rhel8
+    namespace:
+        created_at: '2023-10-31T19:37:24.188526Z'
+        id: c749e0f5-c975-4f76-b747-8ecf6549484d
+        my_permissions:
+        - container.add_containernamespace
+        - container.change_containernamespace
+        - container.delete_containernamespace
+        - container.manage_roles_containernamespace
+        - container.namespace_add_containerdistribution
+        - container.namespace_change_containerdistribution
+        - container.namespace_change_containerpushrepository
+        - container.namespace_delete_containerdistribution
+        - container.namespace_modify_content_containerpushrepository
+        - container.namespace_pull_containerdistribution
+        - container.namespace_push_containerdistribution
+        - container.namespace_view_containerdistribution
+        - container.namespace_view_containerpushrepository
+        - container.view_containernamespace
+        name: ee-minimal-rhel8
+        owners:
+        - admin
+        pulp_href: /api/galaxy/pulp/api/v3/pulp_container/namespaces/c749e0f5-c975-4f76-b747-8ecf6549484d/
+        updated_at: '2023-10-31T19:37:24.188537Z'
+    pulp:
+        distribution:
+            base_path: ee-minimal-rhel8
+            created_at: '2023-10-31T19:37:24.192129Z'
+            id: 955f3614-1ae2-40a7-8090-d96d4b035ea0
+            name: ee-minimal-rhel8
+            pulp_labels: {}
+            updated_at: '2023-10-31T19:37:24.192140Z'
+        repository:
+            created_at: '2023-10-31T19:37:24.011275Z'
+            description: null
+            id: 065d3b96-23af-40e7-aa47-30b41fec12ca
+            name: ee-minimal-rhel8
+            pulp_labels: {}
+            pulp_type: container.container-push
+            remote: null
+            sign_state: signed
+            updated_at: '2023-10-31T19:37:41.112583Z'
+            version: 13
+    pulp_href: /api/galaxy/pulp/api/v3/distributions/container/container/955f3614-1ae2-40a7-8090-d96d4b035ea0/
+    updated_at: '2023-10-31T19:37:41.112583Z'
+-   created_at: '2023-10-31T19:37:44.781142Z'
+    description: null
+    id: f25cc5e4-8d9f-4b96-a94b-412dc26c8a00
+    name: ee-supported-rhel8
+    namespace:
+        created_at: '2023-10-31T19:37:44.796008Z'
+        id: badf40ac-c57d-42c6-bdc1-1eaa11fc3e07
+        my_permissions:
+        - container.add_containernamespace
+        - container.change_containernamespace
+        - container.delete_containernamespace
+        - container.manage_roles_containernamespace
+        - container.namespace_add_containerdistribution
+        - container.namespace_change_containerdistribution
+        - container.namespace_change_containerpushrepository
+        - container.namespace_delete_containerdistribution
+        - container.namespace_modify_content_containerpushrepository
+        - container.namespace_pull_containerdistribution
+        - container.namespace_push_containerdistribution
+        - container.namespace_view_containerdistribution
+        - container.namespace_view_containerpushrepository
+        - container.view_containernamespace
+        name: ee-supported-rhel8
+        owners:
+        - admin
+        pulp_href: /api/galaxy/pulp/api/v3/pulp_container/namespaces/badf40ac-c57d-42c6-bdc1-1eaa11fc3e07/
+        updated_at: '2023-10-31T19:37:44.796031Z'
+    pulp:
+        distribution:
+            base_path: ee-supported-rhel8
+            created_at: '2023-10-31T19:37:44.799899Z'
+            id: f25cc5e4-8d9f-4b96-a94b-412dc26c8a00
+            name: ee-supported-rhel8
+            pulp_labels: {}
+            updated_at: '2023-10-31T19:37:44.799909Z'
+        repository:
+            created_at: '2023-10-31T19:37:44.781142Z'
+            description: null
+            id: d07f1306-a2f8-4bba-a63a-8f3567e41f5d
+            name: ee-supported-rhel8
+            pulp_labels: {}
+            pulp_type: container.container-push
+            remote: null
+            sign_state: signed
+            updated_at: '2023-10-31T19:38:14.299685Z'
+            version: 14
+    pulp_href: /api/galaxy/pulp/api/v3/distributions/container/container/f25cc5e4-8d9f-4b96-a94b-412dc26c8a00/
+    updated_at: '2023-10-31T19:38:14.299685Z'
+-   created_at: '2023-10-31T19:38:19.270957Z'
+    description: null
+    id: 2f58ca9a-119c-48bf-8215-8d0a9f75a662
+    name: ee-29-rhel8
+    namespace:
+        created_at: '2023-10-31T19:38:19.286955Z'
+        id: 96c3e68f-5c75-4f07-a03f-a761d8f594ca
+        my_permissions:
+        - container.add_containernamespace
+        - container.change_containernamespace
+        - container.delete_containernamespace
+        - container.manage_roles_containernamespace
+        - container.namespace_add_containerdistribution
+        - container.namespace_change_containerdistribution
+        - container.namespace_change_containerpushrepository
+        - container.namespace_delete_containerdistribution
+        - container.namespace_modify_content_containerpushrepository
+        - container.namespace_pull_containerdistribution
+        - container.namespace_push_containerdistribution
+        - container.namespace_view_containerdistribution
+        - container.namespace_view_containerpushrepository
+        - container.view_containernamespace
+        name: ee-29-rhel8
+        owners:
+        - admin
+        pulp_href: /api/galaxy/pulp/api/v3/pulp_container/namespaces/96c3e68f-5c75-4f07-a03f-a761d8f594ca/
+        updated_at: '2023-10-31T19:38:19.286967Z'
+    pulp:
+        distribution:
+            base_path: ee-29-rhel8
+            created_at: '2023-10-31T19:38:19.292148Z'
+            id: 2f58ca9a-119c-48bf-8215-8d0a9f75a662
+            name: ee-29-rhel8
+            pulp_labels: {}
+            updated_at: '2023-10-31T19:38:19.292159Z'
+        repository:
+            created_at: '2023-10-31T19:38:19.270957Z'
+            description: null
+            id: 5ae7396c-8215-4b53-8d1e-3681800d9163
+            name: ee-29-rhel8
+            pulp_labels: {}
+            pulp_type: container.container-push
+            remote: null
+            sign_state: signed
+            updated_at: '2023-10-31T19:38:42.519216Z'
+            version: 14
+    pulp_href: /api/galaxy/pulp/api/v3/distributions/container/container/2f58ca9a-119c-48bf-8215-8d0a9f75a662/
+    updated_at: '2023-10-31T19:38:42.519216Z'
+-   created_at: '2023-10-31T19:38:46.414129Z'
+    description: null
+    id: f8667b11-8b6d-490c-9a1d-17f7c3a38d4f
+    name: de-minimal-rhel8
+    namespace:
+        created_at: '2023-10-31T19:38:46.430283Z'
+        id: 1128c643-e6a6-4d73-9000-1aefafa70b77
+        my_permissions:
+        - container.add_containernamespace
+        - container.change_containernamespace
+        - container.delete_containernamespace
+        - container.manage_roles_containernamespace
+        - container.namespace_add_containerdistribution
+        - container.namespace_change_containerdistribution
+        - container.namespace_change_containerpushrepository
+        - container.namespace_delete_containerdistribution
+        - container.namespace_modify_content_containerpushrepository
+        - container.namespace_pull_containerdistribution
+        - container.namespace_push_containerdistribution
+        - container.namespace_view_containerdistribution
+        - container.namespace_view_containerpushrepository
+        - container.view_containernamespace
+        name: de-minimal-rhel8
+        owners:
+        - admin
+        pulp_href: /api/galaxy/pulp/api/v3/pulp_container/namespaces/1128c643-e6a6-4d73-9000-1aefafa70b77/
+        updated_at: '2023-10-31T19:38:46.430298Z'
+    pulp:
+        distribution:
+            base_path: de-minimal-rhel8
+            created_at: '2023-10-31T19:38:46.434329Z'
+            id: f8667b11-8b6d-490c-9a1d-17f7c3a38d4f
+            name: de-minimal-rhel8
+            pulp_labels: {}
+            updated_at: '2023-10-31T19:38:46.434340Z'
+        repository:
+            created_at: '2023-10-31T19:38:46.414129Z'
+            description: null
+            id: 49f9a80c-5720-4034-a16f-b9f74ee5d087
+            name: de-minimal-rhel8
+            pulp_labels: {}
+            pulp_type: container.container-push
+            remote: null
+            sign_state: signed
+            updated_at: '2023-10-31T19:39:05.681236Z'
+            version: 13
+    pulp_href: /api/galaxy/pulp/api/v3/distributions/container/container/f8667b11-8b6d-490c-9a1d-17f7c3a38d4f/
+    updated_at: '2023-10-31T19:39:05.681236Z'
+-   created_at: '2023-10-31T19:39:09.569955Z'
+    description: null
+    id: d16e5683-a8a5-4d72-9139-cc10e62ee640
+    name: de-supported-rhel8
+    namespace:
+        created_at: '2023-10-31T19:39:09.592916Z'
+        id: 8882dd24-6551-4e9f-9b72-5cc6b30512ec
+        my_permissions:
+        - container.add_containernamespace
+        - container.change_containernamespace
+        - container.delete_containernamespace
+        - container.manage_roles_containernamespace
+        - container.namespace_add_containerdistribution
+        - container.namespace_change_containerdistribution
+        - container.namespace_change_containerpushrepository
+        - container.namespace_delete_containerdistribution
+        - container.namespace_modify_content_containerpushrepository
+        - container.namespace_pull_containerdistribution
+        - container.namespace_push_containerdistribution
+        - container.namespace_view_containerdistribution
+        - container.namespace_view_containerpushrepository
+        - container.view_containernamespace
+        name: de-supported-rhel8
+        owners:
+        - admin
+        pulp_href: /api/galaxy/pulp/api/v3/pulp_container/namespaces/8882dd24-6551-4e9f-9b72-5cc6b30512ec/
+        updated_at: '2023-10-31T19:39:09.592928Z'
+    pulp:
+        distribution:
+            base_path: de-supported-rhel8
+            created_at: '2023-10-31T19:39:09.595116Z'
+            id: d16e5683-a8a5-4d72-9139-cc10e62ee640
+            name: de-supported-rhel8
+            pulp_labels: {}
+            updated_at: '2023-10-31T19:39:09.595123Z'
+        repository:
+            created_at: '2023-10-31T19:39:09.569955Z'
+            description: null
+            id: 21800db0-ec8e-4321-9f3e-5e564af46910
+            name: de-supported-rhel8
+            pulp_labels: {}
+            pulp_type: container.container-push
+            remote: null
+            sign_state: signed
+            updated_at: '2023-10-31T19:39:22.850016Z'
+            version: 14
+    pulp_href: /api/galaxy/pulp/api/v3/distributions/container/container/d16e5683-a8a5-4d72-9139-cc10e62ee640/
+    updated_at: '2023-10-31T19:39:22.850016Z'
+-   created_at: '2023-10-31T19:39:26.531493Z'
+    description: null
+    id: feac3205-bcdc-4415-a5d3-1131e5b18fed
+    name: ansible-builder-rhel8
+    namespace:
+        created_at: '2023-10-31T19:39:26.546838Z'
+        id: ed9b7ca0-9dbf-41e0-952f-9a18bbda4364
+        my_permissions:
+        - container.add_containernamespace
+        - container.change_containernamespace
+        - container.delete_containernamespace
+        - container.manage_roles_containernamespace
+        - container.namespace_add_containerdistribution
+        - container.namespace_change_containerdistribution
+        - container.namespace_change_containerpushrepository
+        - container.namespace_delete_containerdistribution
+        - container.namespace_modify_content_containerpushrepository
+        - container.namespace_pull_containerdistribution
+        - container.namespace_push_containerdistribution
+        - container.namespace_view_containerdistribution
+        - container.namespace_view_containerpushrepository
+        - container.view_containernamespace
+        name: ansible-builder-rhel8
+        owners:
+        - admin
+        pulp_href: /api/galaxy/pulp/api/v3/pulp_container/namespaces/ed9b7ca0-9dbf-41e0-952f-9a18bbda4364/
+        updated_at: '2023-10-31T19:39:26.546853Z'
+    pulp:
+        distribution:
+            base_path: ansible-builder-rhel8
+            created_at: '2023-10-31T19:39:26.550514Z'
+            id: feac3205-bcdc-4415-a5d3-1131e5b18fed
+            name: ansible-builder-rhel8
+            pulp_labels: {}
+            updated_at: '2023-10-31T19:39:26.550526Z'
+        repository:
+            created_at: '2023-10-31T19:39:26.531493Z'
+            description: null
+            id: db92f72a-9ce2-4a14-a85b-4b346d731256
+            name: ansible-builder-rhel8
+            pulp_labels: {}
+            pulp_type: container.container-push
+            remote: null
+            sign_state: signed
+            updated_at: '2023-10-31T19:39:39.315564Z'
+            version: 13
+    pulp_href: /api/galaxy/pulp/api/v3/distributions/container/container/feac3205-bcdc-4415-a5d3-1131e5b18fed/
+    updated_at: '2023-10-31T19:39:39.315564Z'
+-   created_at: '2025-09-20T20:44:22.124525Z'
+    description: Ansible Automation Platform minimal execution environment
+    id: 019968de-e50b-79b9-aa15-330e737d134c
+    name: ansible-automation-platform/ee-minimal-rhel8
+    namespace:
+        created_at: '2025-09-20T20:44:22.151402Z'
+        id: 019968de-e506-75d8-b564-f3a6b3911b83
+        my_permissions:
+        - container.add_containernamespace
+        - container.change_containernamespace
+        - container.delete_containernamespace
+        - container.manage_roles_containernamespace
+        - container.namespace_add_containerdistribution
+        - container.namespace_change_containerdistribution
+        - container.namespace_change_containerpushrepository
+        - container.namespace_delete_containerdistribution
+        - container.namespace_modify_content_containerpushrepository
+        - container.namespace_pull_containerdistribution
+        - container.namespace_push_containerdistribution
+        - container.namespace_view_containerdistribution
+        - container.namespace_view_containerpushrepository
+        - container.view_containernamespace
+        name: ansible-automation-platform
+        owners:
+        - admin
+        pulp_href: /api/galaxy/pulp/api/v3/pulp_container/namespaces/019968de-e506-75d8-b564-f3a6b3911b83/
+        updated_at: '2025-09-20T20:44:22.151429Z'
+    pulp:
+        distribution:
+            base_path: ansible-automation-platform/ee-minimal-rhel8
+            created_at: '2025-09-20T20:44:22.156158Z'
+            id: 019968de-e50b-79b9-aa15-330e737d134c
+            name: ansible-automation-platform/ee-minimal-rhel8
+            pulp_labels: {}
+            updated_at: '2025-09-20T20:44:22.164697Z'
+        repository:
+            created_at: '2025-09-20T20:44:22.124525Z'
+            description: null
+            id: 019968de-e4eb-797b-a7af-8232aedae60a
+            name: ansible-automation-platform/ee-minimal-rhel8
+            pulp_labels: {}
+            pulp_type: container.container
+            remote:
+                created_at: '2025-09-20T20:44:21.818252Z'
+                exclude_tags:
+                - '*-source'
+                id: 019968de-e3b9-7094-8fed-42210dbf9ebb
+                include_foreign_layers: false
+                include_tags: null
+                last_sync_task:
+                    error:
+                        description: 403, message='Forbidden', url=URL('https://registry.redhat.io/v2/ansible-automation-platform/ee-minimal-rhel8/manifests/latest')
+                        traceback: "  File \"/usr/lib/python3.9/site-packages/pulpcore/tasking/tasks.py\",
+                            line 66, in _execute_task\n    result = func(*args, **kwargs)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulp_container/app/tasks/synchronize.py\",
+                            line 41, in synchronize\n    return dv.create()\n  File
+                            \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/declarative_version.py\",
+                            line 161, in create\n    loop.run_until_complete(pipeline)\n
+                            \ File \"/usr/lib64/python3.9/asyncio/base_events.py\",
+                            line 647, in run_until_complete\n    return future.result()\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/api.py\",
+                            line 220, in create_pipeline\n    await asyncio.gather(*futures)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/api.py\",
+                            line 41, in __call__\n    await self.run()\n  File \"/usr/lib/python3.9/site-packages/pulp_container/app/tasks/sync_stages.py\",
+                            line 163, in run\n    saved_artifact, content_data, raw_data,
+                            response = await artifact\n  File \"/usr/lib64/python3.9/asyncio/tasks.py\",
+                            line 611, in _wait_for_one\n    return f.result()  # May
+                            raise f.exception().\n  File \"/usr/lib/python3.9/site-packages/pulp_container/app/tasks/sync_stages.py\",
+                            line 92, in _check_for_existing_manifest\n    response
+                            = await download_tag\n  File \"/usr/lib64/python3.9/asyncio/tasks.py\",
+                            line 611, in _wait_for_one\n    return f.result()  # May
+                            raise f.exception().\n  File \"/usr/lib/python3.9/site-packages/pulpcore/download/http.py\",
+                            line 269, in run\n    return await download_wrapper()\n
+                            \ File \"/usr/lib/python3.9/site-packages/backoff/_async.py\",
+                            line 151, in retry\n    ret = await target(*args, **kwargs)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/download/http.py\",
+                            line 254, in download_wrapper\n    return await self._run(extra_data=extra_data)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulp_container/app/downloaders.py\",
+                            line 75, in _run\n    response.raise_for_status()\n  File
+                            \"/usr/lib64/python3.9/site-packages/aiohttp/client_reqrep.py\",
+                            line 1070, in raise_for_status\n    raise ClientResponseError(\n"
+                    finished_at: '2026-03-22T02:21:49.416281Z'
+                    started_at: '2026-03-22T02:20:32.845489Z'
+                    state: failed
+                    task_id: 019d1358-14a6-7688-b551-34f00e1ba25f
+                name: ansible-automation-platform/ee-minimal-rhel8
+                pulp_href: /api/galaxy/pulp/api/v3/remotes/container/container/019968de-e3b9-7094-8fed-42210dbf9ebb/
+                registry: 019968de-a1a3-7a98-b3c9-be3e1e69ed0f
+                updated_at: '2026-03-22T02:20:32.707738Z'
+                upstream_name: ansible-automation-platform/ee-minimal-rhel8
+            sign_state: unsigned
+            updated_at: '2025-09-20T20:44:22.132387Z'
+            version: 0
+    pulp_href: /api/galaxy/pulp/api/v3/distributions/container/container/019968de-e50b-79b9-aa15-330e737d134c/
+    updated_at: '2025-09-20T20:44:22.132387Z'
+-   created_at: '2025-09-20T20:44:22.518551Z'
+    description: Ansible Automation Platform minimal execution environment
+    id: 019968de-e68d-7a06-8c54-41d3d91e73b1
+    name: ansible-automation-platform-24/ee-minimal-rhel8
+    namespace:
+        created_at: '2025-09-20T20:44:22.538214Z'
+        id: 019968de-e689-7b53-aedf-05f58ffb5e83
+        my_permissions:
+        - container.add_containernamespace
+        - container.change_containernamespace
+        - container.delete_containernamespace
+        - container.manage_roles_containernamespace
+        - container.namespace_add_containerdistribution
+        - container.namespace_change_containerdistribution
+        - container.namespace_change_containerpushrepository
+        - container.namespace_delete_containerdistribution
+        - container.namespace_modify_content_containerpushrepository
+        - container.namespace_pull_containerdistribution
+        - container.namespace_push_containerdistribution
+        - container.namespace_view_containerdistribution
+        - container.namespace_view_containerpushrepository
+        - container.view_containernamespace
+        name: ansible-automation-platform-24
+        owners:
+        - admin
+        pulp_href: /api/galaxy/pulp/api/v3/pulp_container/namespaces/019968de-e689-7b53-aedf-05f58ffb5e83/
+        updated_at: '2025-09-20T20:44:22.538225Z'
+    pulp:
+        distribution:
+            base_path: ansible-automation-platform-24/ee-minimal-rhel8
+            created_at: '2025-09-20T20:44:22.542274Z'
+            id: 019968de-e68d-7a06-8c54-41d3d91e73b1
+            name: ansible-automation-platform-24/ee-minimal-rhel8
+            pulp_labels: {}
+            updated_at: '2025-09-20T20:44:22.548239Z'
+        repository:
+            created_at: '2025-09-20T20:44:22.518551Z'
+            description: null
+            id: 019968de-e675-78e0-8918-c13188edafd2
+            name: ansible-automation-platform-24/ee-minimal-rhel8
+            pulp_labels: {}
+            pulp_type: container.container
+            remote:
+                created_at: '2025-09-20T20:44:22.225674Z'
+                exclude_tags:
+                - '*-source'
+                id: 019968de-e550-710a-9837-49d72489bd2b
+                include_foreign_layers: false
+                include_tags: null
+                last_sync_task:
+                    error:
+                        description: '[Errno 28] No space left on device'
+                        traceback: "  File \"/usr/lib/python3.9/site-packages/pulpcore/tasking/tasks.py\",
+                            line 66, in _execute_task\n    result = func(*args, **kwargs)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulp_container/app/tasks/synchronize.py\",
+                            line 41, in synchronize\n    return dv.create()\n  File
+                            \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/declarative_version.py\",
+                            line 161, in create\n    loop.run_until_complete(pipeline)\n
+                            \ File \"/usr/lib64/python3.9/asyncio/base_events.py\",
+                            line 647, in run_until_complete\n    return future.result()\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/api.py\",
+                            line 220, in create_pipeline\n    await asyncio.gather(*futures)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/api.py\",
+                            line 41, in __call__\n    await self.run()\n  File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/artifact_stages.py\",
+                            line 186, in run\n    pb.done += task.result()  # download_count\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/artifact_stages.py\",
+                            line 241, in _handle_content_unit\n    await asyncio.gather(*downloaders_for_content)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/models.py\",
+                            line 119, in download\n    raise e\n  File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/models.py\",
+                            line 111, in download\n    download_result = await downloader.run(extra_data=self.extra_data)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/download/http.py\",
+                            line 269, in run\n    return await download_wrapper()\n
+                            \ File \"/usr/lib/python3.9/site-packages/backoff/_async.py\",
+                            line 151, in retry\n    ret = await target(*args, **kwargs)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/download/http.py\",
+                            line 254, in download_wrapper\n    return await self._run(extra_data=extra_data)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulp_container/app/downloaders.py\",
+                            line 97, in _run\n    to_return = await self._handle_response(response)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/download/http.py\",
+                            line 207, in _handle_response\n    await self.handle_data(chunk)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/download/base.py\",
+                            line 148, in handle_data\n    self._writer.write(data)\n
+                            \ File \"/usr/lib64/python3.9/tempfile.py\", line 494,
+                            in func_wrapper\n    return func(*args, **kwargs)\n"
+                    finished_at: '2026-05-07T23:03:35.106898Z'
+                    started_at: '2026-05-07T22:59:42.096563Z'
+                    state: failed
+                    task_id: 019e04ab-176d-717a-9480-ffbdcd29bb3a
+                name: ansible-automation-platform-24/ee-minimal-rhel8
+                pulp_href: /api/galaxy/pulp/api/v3/remotes/container/container/019968de-e550-710a-9837-49d72489bd2b/
+                registry: 019968de-a1a3-7a98-b3c9-be3e1e69ed0f
+                updated_at: '2026-05-07T22:59:42.059096Z'
+                upstream_name: ansible-automation-platform-24/ee-minimal-rhel8
+            sign_state: unsigned
+            updated_at: '2025-09-20T20:44:22.523537Z'
+            version: 0
+    pulp_href: /api/galaxy/pulp/api/v3/distributions/container/container/019968de-e68d-7a06-8c54-41d3d91e73b1/
+    updated_at: '2025-09-20T20:44:22.523537Z'
+-   created_at: '2025-09-20T20:44:22.901085Z'
+    description: Ansible Automation Platform supported execution environment
+    id: 019968de-e806-7e6e-af08-fc0c9660ab5d
+    name: ansible-automation-platform-24/ee-supported-rhel8
+    namespace:
+        created_at: '2025-09-20T20:44:22.538214Z'
+        id: 019968de-e689-7b53-aedf-05f58ffb5e83
+        my_permissions:
+        - container.add_containernamespace
+        - container.change_containernamespace
+        - container.delete_containernamespace
+        - container.manage_roles_containernamespace
+        - container.namespace_add_containerdistribution
+        - container.namespace_change_containerdistribution
+        - container.namespace_change_containerpushrepository
+        - container.namespace_delete_containerdistribution
+        - container.namespace_modify_content_containerpushrepository
+        - container.namespace_pull_containerdistribution
+        - container.namespace_push_containerdistribution
+        - container.namespace_view_containerdistribution
+        - container.namespace_view_containerpushrepository
+        - container.view_containernamespace
+        name: ansible-automation-platform-24
+        owners:
+        - admin
+        pulp_href: /api/galaxy/pulp/api/v3/pulp_container/namespaces/019968de-e689-7b53-aedf-05f58ffb5e83/
+        updated_at: '2025-09-20T20:44:22.538225Z'
+    pulp:
+        distribution:
+            base_path: ansible-automation-platform-24/ee-supported-rhel8
+            created_at: '2025-09-20T20:44:22.919750Z'
+            id: 019968de-e806-7e6e-af08-fc0c9660ab5d
+            name: ansible-automation-platform-24/ee-supported-rhel8
+            pulp_labels: {}
+            updated_at: '2025-09-20T20:44:22.926642Z'
+        repository:
+            created_at: '2025-09-20T20:44:22.901085Z'
+            description: null
+            id: 019968de-e7f4-78b4-afbc-aa546490e503
+            name: ansible-automation-platform-24/ee-supported-rhel8
+            pulp_labels: {}
+            pulp_type: container.container
+            remote:
+                created_at: '2025-09-20T20:44:22.607076Z'
+                exclude_tags:
+                - '*-source'
+                id: 019968de-e6cd-7022-89cf-4dd5caaecb09
+                include_foreign_layers: false
+                include_tags: null
+                last_sync_task:
+                    error:
+                        description: '[Errno 28] No space left on device'
+                        traceback: "  File \"/usr/lib/python3.9/site-packages/pulpcore/tasking/tasks.py\",
+                            line 66, in _execute_task\n    result = func(*args, **kwargs)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulp_container/app/tasks/synchronize.py\",
+                            line 41, in synchronize\n    return dv.create()\n  File
+                            \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/declarative_version.py\",
+                            line 161, in create\n    loop.run_until_complete(pipeline)\n
+                            \ File \"/usr/lib64/python3.9/asyncio/base_events.py\",
+                            line 647, in run_until_complete\n    return future.result()\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/api.py\",
+                            line 220, in create_pipeline\n    await asyncio.gather(*futures)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/api.py\",
+                            line 41, in __call__\n    await self.run()\n  File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/artifact_stages.py\",
+                            line 186, in run\n    pb.done += task.result()  # download_count\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/artifact_stages.py\",
+                            line 241, in _handle_content_unit\n    await asyncio.gather(*downloaders_for_content)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/models.py\",
+                            line 119, in download\n    raise e\n  File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/models.py\",
+                            line 111, in download\n    download_result = await downloader.run(extra_data=self.extra_data)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/download/http.py\",
+                            line 269, in run\n    return await download_wrapper()\n
+                            \ File \"/usr/lib/python3.9/site-packages/backoff/_async.py\",
+                            line 151, in retry\n    ret = await target(*args, **kwargs)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/download/http.py\",
+                            line 254, in download_wrapper\n    return await self._run(extra_data=extra_data)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulp_container/app/downloaders.py\",
+                            line 97, in _run\n    to_return = await self._handle_response(response)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/download/http.py\",
+                            line 207, in _handle_response\n    await self.handle_data(chunk)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/download/base.py\",
+                            line 148, in handle_data\n    self._writer.write(data)\n
+                            \ File \"/usr/lib64/python3.9/tempfile.py\", line 494,
+                            in func_wrapper\n    return func(*args, **kwargs)\n"
+                    finished_at: '2026-03-22T02:57:25.770727Z'
+                    started_at: '2026-03-22T02:20:33.739169Z'
+                    state: failed
+                    task_id: 019d1358-14d9-785d-805e-19ecc418dff7
+                name: ansible-automation-platform-24/ee-supported-rhel8
+                pulp_href: /api/galaxy/pulp/api/v3/remotes/container/container/019968de-e6cd-7022-89cf-4dd5caaecb09/
+                registry: 019968de-a1a3-7a98-b3c9-be3e1e69ed0f
+                updated_at: '2026-03-22T02:20:32.856006Z'
+                upstream_name: ansible-automation-platform-24/ee-supported-rhel8
+            sign_state: unsigned
+            updated_at: '2025-09-20T20:44:22.905714Z'
+            version: 0
+    pulp_href: /api/galaxy/pulp/api/v3/distributions/container/container/019968de-e806-7e6e-af08-fc0c9660ab5d/
+    updated_at: '2025-09-20T20:44:22.905714Z'
+-   created_at: '2025-09-20T20:44:23.279235Z'
+    description: Ansible Automation Platform minimal execution environment
+    id: 019968de-e981-784d-bbe1-3bab4be70b92
+    name: ansible-automation-platform-24/ee-minimal-rhel9
+    namespace:
+        created_at: '2025-09-20T20:44:22.538214Z'
+        id: 019968de-e689-7b53-aedf-05f58ffb5e83
+        my_permissions:
+        - container.add_containernamespace
+        - container.change_containernamespace
+        - container.delete_containernamespace
+        - container.manage_roles_containernamespace
+        - container.namespace_add_containerdistribution
+        - container.namespace_change_containerdistribution
+        - container.namespace_change_containerpushrepository
+        - container.namespace_delete_containerdistribution
+        - container.namespace_modify_content_containerpushrepository
+        - container.namespace_pull_containerdistribution
+        - container.namespace_push_containerdistribution
+        - container.namespace_view_containerdistribution
+        - container.namespace_view_containerpushrepository
+        - container.view_containernamespace
+        name: ansible-automation-platform-24
+        owners:
+        - admin
+        pulp_href: /api/galaxy/pulp/api/v3/pulp_container/namespaces/019968de-e689-7b53-aedf-05f58ffb5e83/
+        updated_at: '2025-09-20T20:44:22.538225Z'
+    pulp:
+        distribution:
+            base_path: ansible-automation-platform-24/ee-minimal-rhel9
+            created_at: '2025-09-20T20:44:23.297948Z'
+            id: 019968de-e981-784d-bbe1-3bab4be70b92
+            name: ansible-automation-platform-24/ee-minimal-rhel9
+            pulp_labels: {}
+            updated_at: '2025-09-20T20:44:23.305241Z'
+        repository:
+            created_at: '2025-09-20T20:44:23.279235Z'
+            description: null
+            id: 019968de-e96e-7d4b-8e77-9f52508fac51
+            name: ansible-automation-platform-24/ee-minimal-rhel9
+            pulp_labels: {}
+            pulp_type: container.container
+            remote:
+                created_at: '2025-09-20T20:44:22.985510Z'
+                exclude_tags:
+                - '*-source'
+                id: 019968de-e848-751c-924a-4fb03eb18cda
+                include_foreign_layers: false
+                include_tags: null
+                last_sync_task:
+                    error:
+                        description: '[Errno 28] No space left on device'
+                        traceback: "  File \"/usr/lib/python3.9/site-packages/pulpcore/tasking/tasks.py\",
+                            line 66, in _execute_task\n    result = func(*args, **kwargs)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulp_container/app/tasks/synchronize.py\",
+                            line 41, in synchronize\n    return dv.create()\n  File
+                            \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/declarative_version.py\",
+                            line 161, in create\n    loop.run_until_complete(pipeline)\n
+                            \ File \"/usr/lib64/python3.9/asyncio/base_events.py\",
+                            line 647, in run_until_complete\n    return future.result()\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/api.py\",
+                            line 220, in create_pipeline\n    await asyncio.gather(*futures)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/api.py\",
+                            line 41, in __call__\n    await self.run()\n  File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/artifact_stages.py\",
+                            line 186, in run\n    pb.done += task.result()  # download_count\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/artifact_stages.py\",
+                            line 241, in _handle_content_unit\n    await asyncio.gather(*downloaders_for_content)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/models.py\",
+                            line 119, in download\n    raise e\n  File \"/usr/lib/python3.9/site-packages/pulpcore/plugin/stages/models.py\",
+                            line 111, in download\n    download_result = await downloader.run(extra_data=self.extra_data)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/download/http.py\",
+                            line 269, in run\n    return await download_wrapper()\n
+                            \ File \"/usr/lib/python3.9/site-packages/backoff/_async.py\",
+                            line 151, in retry\n    ret = await target(*args, **kwargs)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/download/http.py\",
+                            line 254, in download_wrapper\n    return await self._run(extra_data=extra_data)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulp_container/app/downloaders.py\",
+                            line 97, in _run\n    to_return = await self._handle_response(response)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/download/http.py\",
+                            line 207, in _handle_response\n    await self.handle_data(chunk)\n
+                            \ File \"/usr/lib/python3.9/site-packages/pulpcore/download/base.py\",
+                            line 148, in handle_data\n    self._writer.write(data)\n
+                            \ File \"/usr/lib64/python3.9/tempfile.py\", line 494,
+                            in func_wrapper\n    return func(*args, **kwargs)\n"
+                    finished_at: '2026-03-22T02:57:25.635659Z'
+                    started_at: '2026-03-22T02:21:49.504905Z'
+                    state: failed
+                    task_id: 019d1358-14ef-7b04-a274-9c3b0d21b398
+                name: ansible-automation-platform-24/ee-minimal-rhel9
+                pulp_href: /api/galaxy/pulp/api/v3/remotes/container/container/019968de-e848-751c-924a-4fb03eb18cda/
+                registry: 019968de-a1a3-7a98-b3c9-be3e1e69ed0f
+                updated_at: '2026-03-22T02:20:32.878064Z'
+                upstream_name: ansible-automation-platform-24/ee-minimal-rhel9
+            sign_state: unsigned
+            updated_at: '2025-09-20T20:44:23.283864Z'
+            version: 0
+    pulp_href: /api/galaxy/pulp/api/v3/distributions/container/container/019968de-e981-784d-bbe1-3bab4be70b92/
+    updated_at: '2025-09-20T20:44:23.283864Z'
