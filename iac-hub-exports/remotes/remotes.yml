@@ -1,0 +1,220 @@
+-   auth_url: null
+    ca_cert: null
+    client_cert: null
+    created_at: '2023-10-31T04:30:26.477146Z'
+    download_concurrency: 10
+    last_sync_task:
+        error: null
+        finished_at: '2026-03-19T15:23:46.519590Z'
+        started_at: '2026-03-19T15:12:48.736929Z'
+        state: completed
+        task_id: 019d06a8-0848-7ead-99bd-b5993aa88441
+    name: community
+    pk: acb7ef00-4952-4f00-80db-79af68d43b15
+    policy: immediate
+    proxy_url: null
+    proxy_username: null
+    pulp_href: /api/galaxy/pulp/api/v3/remotes/ansible/collection/acb7ef00-4952-4f00-80db-79af68d43b15/
+    rate_limit: 8
+    repositories:
+    -   created_at: '2023-10-31T04:30:26.478328Z'
+        description: Community content repository
+        distributions:
+        -   base_path: community
+            content_guard: 26e6e2c9-c3fb-4136-9c26-4a2a24baae43
+            created_at: '2023-10-31T04:30:26.479848Z'
+            name: community
+            updated_at: '2023-10-31T04:30:26.479853Z'
+        last_sync_task:
+            error: null
+            finished_at: '2026-03-19T15:23:46.519590Z'
+            started_at: '2026-03-19T15:12:48.736929Z'
+            state: completed
+            task_id: 019d06a8-0848-7ead-99bd-b5993aa88441
+        name: community
+        next_version: 5
+        updated_at: '2026-03-19T15:23:46.449273Z'
+    requirements_file: "# Sample requirements.yaml\n\ncollections:\n  - name: community.general"
+    signed_only: false
+    tls_validation: true
+    updated_at: '2024-08-24T22:28:54.160062Z'
+    url: https://galaxy.ansible.com/api/
+    username: null
+    write_only_fields:
+    -   is_set: false
+        name: client_key
+    -   is_set: false
+        name: token
+    -   is_set: false
+        name: password
+    -   is_set: false
+        name: client_key
+    -   is_set: false
+        name: proxy_password
+-   auth_url: https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+    ca_cert: null
+    client_cert: null
+    created_at: '2023-10-31T04:30:26.480838Z'
+    download_concurrency: 10
+    last_sync_task:
+        error:
+            description: 400, message='Bad Request', url=URL('https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token')
+            traceback: "  File \"/usr/lib/python3.9/site-packages/pulpcore/tasking/tasks.py\",
+                line 66, in _execute_task\n    result = func(*args, **kwargs)\n  File
+                \"/usr/lib/python3.9/site-packages/pulp_ansible/app/tasks/collections.py\",
+                line 184, in sync\n    first_stage = CollectionSyncFirstStage(\n  File
+                \"/usr/lib/python3.9/site-packages/pulp_ansible/app/tasks/collections.py\",
+                line 528, in __init__\n    self.should_sync = not is_repo_remote or
+                asyncio.get_event_loop().run_until_complete(\n  File \"/usr/lib64/python3.9/asyncio/base_events.py\",
+                line 647, in run_until_complete\n    return future.result()\n  File
+                \"/usr/lib/python3.9/site-packages/pulp_ansible/app/tasks/collections.py\",
+                line 999, in _should_we_sync\n    root, api_version = await self._get_root_api(self.remote.url)\n
+                \ File \"/usr/lib/python3.9/site-packages/async_lru.py\", line 237,
+                in wrapped\n    return (yield from asyncio.shield(fut, loop=_loop))\n
+                \ File \"/usr/lib/python3.9/site-packages/pulp_ansible/app/tasks/collections.py\",
+                line 552, in _get_root_api\n    api_data = parse_metadata(await downloader.run())\n
+                \ File \"/usr/lib/python3.9/site-packages/pulpcore/download/http.py\",
+                line 269, in run\n    return await download_wrapper()\n  File \"/usr/lib/python3.9/site-packages/backoff/_async.py\",
+                line 151, in retry\n    ret = await target(*args, **kwargs)\n  File
+                \"/usr/lib/python3.9/site-packages/pulpcore/download/http.py\", line
+                254, in download_wrapper\n    return await self._run(extra_data=extra_data)\n
+                \ File \"/usr/lib/python3.9/site-packages/pulp_ansible/app/downloaders.py\",
+                line 92, in _run\n    return await self._run_with_token_refresh_and_401_retry()\n
+                \ File \"/usr/lib/python3.9/site-packages/pulp_ansible/app/downloaders.py\",
+                line 106, in _run_with_token_refresh_and_401_retry\n    token = await
+                self.get_or_update_token()\n  File \"/usr/lib/python3.9/site-packages/pulp_ansible/app/downloaders.py\",
+                line 162, in get_or_update_token\n    async with self.session.post(\n
+                \ File \"/usr/lib64/python3.9/site-packages/aiohttp/client.py\", line
+                1197, in __aenter__\n    self._resp = await self._coro\n  File \"/usr/lib64/python3.9/site-packages/aiohttp/client.py\",
+                line 696, in _request\n    resp.raise_for_status()\n  File \"/usr/lib64/python3.9/site-packages/aiohttp/client_reqrep.py\",
+                line 1070, in raise_for_status\n    raise ClientResponseError(\n"
+        finished_at: '2026-05-07T22:47:01.690557Z'
+        started_at: '2026-05-07T22:47:01.349561Z'
+        state: failed
+        task_id: 019e049f-7bc5-73b8-bf68-56ee3dd36ff8
+    name: rh-certified
+    pk: fb17fea5-812e-4085-88f9-516808be9987
+    policy: immediate
+    proxy_url: null
+    proxy_username: null
+    pulp_href: /api/galaxy/pulp/api/v3/remotes/ansible/collection/fb17fea5-812e-4085-88f9-516808be9987/
+    rate_limit: 8
+    repositories:
+    -   created_at: '2023-10-31T04:30:26.481710Z'
+        description: Red Hat certified content repository
+        distributions:
+        -   base_path: rh-certified
+            content_guard: 26e6e2c9-c3fb-4136-9c26-4a2a24baae43
+            created_at: '2023-10-31T04:30:26.483182Z'
+            name: rh-certified
+            updated_at: '2023-10-31T04:30:26.483188Z'
+        last_sync_task:
+            error:
+                description: 400, message='Bad Request', url=URL('https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token')
+                traceback: "  File \"/usr/lib/python3.9/site-packages/pulpcore/tasking/tasks.py\",
+                    line 66, in _execute_task\n    result = func(*args, **kwargs)\n
+                    \ File \"/usr/lib/python3.9/site-packages/pulp_ansible/app/tasks/collections.py\",
+                    line 184, in sync\n    first_stage = CollectionSyncFirstStage(\n
+                    \ File \"/usr/lib/python3.9/site-packages/pulp_ansible/app/tasks/collections.py\",
+                    line 528, in __init__\n    self.should_sync = not is_repo_remote
+                    or asyncio.get_event_loop().run_until_complete(\n  File \"/usr/lib64/python3.9/asyncio/base_events.py\",
+                    line 647, in run_until_complete\n    return future.result()\n
+                    \ File \"/usr/lib/python3.9/site-packages/pulp_ansible/app/tasks/collections.py\",
+                    line 999, in _should_we_sync\n    root, api_version = await self._get_root_api(self.remote.url)\n
+                    \ File \"/usr/lib/python3.9/site-packages/async_lru.py\", line
+                    237, in wrapped\n    return (yield from asyncio.shield(fut, loop=_loop))\n
+                    \ File \"/usr/lib/python3.9/site-packages/pulp_ansible/app/tasks/collections.py\",
+                    line 552, in _get_root_api\n    api_data = parse_metadata(await
+                    downloader.run())\n  File \"/usr/lib/python3.9/site-packages/pulpcore/download/http.py\",
+                    line 269, in run\n    return await download_wrapper()\n  File
+                    \"/usr/lib/python3.9/site-packages/backoff/_async.py\", line 151,
+                    in retry\n    ret = await target(*args, **kwargs)\n  File \"/usr/lib/python3.9/site-packages/pulpcore/download/http.py\",
+                    line 254, in download_wrapper\n    return await self._run(extra_data=extra_data)\n
+                    \ File \"/usr/lib/python3.9/site-packages/pulp_ansible/app/downloaders.py\",
+                    line 92, in _run\n    return await self._run_with_token_refresh_and_401_retry()\n
+                    \ File \"/usr/lib/python3.9/site-packages/pulp_ansible/app/downloaders.py\",
+                    line 106, in _run_with_token_refresh_and_401_retry\n    token
+                    = await self.get_or_update_token()\n  File \"/usr/lib/python3.9/site-packages/pulp_ansible/app/downloaders.py\",
+                    line 162, in get_or_update_token\n    async with self.session.post(\n
+                    \ File \"/usr/lib64/python3.9/site-packages/aiohttp/client.py\",
+                    line 1197, in __aenter__\n    self._resp = await self._coro\n
+                    \ File \"/usr/lib64/python3.9/site-packages/aiohttp/client.py\",
+                    line 696, in _request\n    resp.raise_for_status()\n  File \"/usr/lib64/python3.9/site-packages/aiohttp/client_reqrep.py\",
+                    line 1070, in raise_for_status\n    raise ClientResponseError(\n"
+            finished_at: '2026-05-07T22:47:01.690557Z'
+            started_at: '2026-05-07T22:47:01.349561Z'
+            state: failed
+            task_id: 019e049f-7bc5-73b8-bf68-56ee3dd36ff8
+        name: rh-certified
+        next_version: 6
+        updated_at: '2026-03-19T15:03:46.428340Z'
+    requirements_file: null
+    signed_only: false
+    tls_validation: true
+    updated_at: '2026-03-19T14:53:55.236238Z'
+    url: https://console.redhat.com/api/automation-hub/content/published/
+    username: null
+    write_only_fields:
+    -   is_set: false
+        name: client_key
+    -   is_set: true
+        name: token
+    -   is_set: false
+        name: password
+    -   is_set: false
+        name: client_key
+    -   is_set: false
+        name: proxy_password
+-   auth_url: https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+    ca_cert: null
+    client_cert: null
+    created_at: '2024-08-08T15:43:43.505653Z'
+    download_concurrency: 10
+    last_sync_task:
+        error: null
+        finished_at: '2026-03-19T14:59:03.227101Z'
+        started_at: '2026-03-19T14:58:38.100827Z'
+        state: completed
+        task_id: 019d069b-0d6a-7cf8-b514-f1feb1e68f21
+    name: validated
+    pk: 1a01b06d-ba2b-4655-a5c6-fe9034c87468
+    policy: immediate
+    proxy_url: null
+    proxy_username: null
+    pulp_href: /api/galaxy/pulp/api/v3/remotes/ansible/collection/1a01b06d-ba2b-4655-a5c6-fe9034c87468/
+    rate_limit: null
+    repositories:
+    -   created_at: '2023-10-31T04:30:27.434736Z'
+        description: Validated collections
+        distributions:
+        -   base_path: validated
+            content_guard: 26e6e2c9-c3fb-4136-9c26-4a2a24baae43
+            created_at: '2023-10-31T04:30:27.437890Z'
+            name: validated
+            updated_at: '2023-10-31T04:30:27.437896Z'
+        last_sync_task:
+            error: null
+            finished_at: '2026-03-19T14:59:03.227101Z'
+            started_at: '2026-03-19T14:58:38.100827Z'
+            state: completed
+            task_id: 019d069b-0d6a-7cf8-b514-f1feb1e68f21
+        name: validated
+        next_version: 5
+        updated_at: '2026-03-19T14:59:03.166598Z'
+    requirements_file: null
+    signed_only: false
+    tls_validation: true
+    updated_at: '2026-03-19T14:54:59.599403Z'
+    url: https://console.redhat.com/api/automation-hub/content/validated/
+    username: null
+    write_only_fields:
+    -   is_set: false
+        name: client_key
+    -   is_set: true
+        name: token
+    -   is_set: false
+        name: password
+    -   is_set: false
+        name: client_key
+    -   is_set: false
+        name: proxy_password
