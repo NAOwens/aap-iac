@@ -8,8 +8,8 @@
     ah_host: "https://rhel92.ofam.dev"
     
     # Using a dedicated token variable for Hub (or you can reuse the controller token if SSO is linked)
-    ah_token: "{{ lookup('env', 'AH_TOKEN') }}"
-#    ah_token: "{{ my_ah_token }}"
+#    ah_token: "{{ lookup('env', 'AH_TOKEN') }}"
+    ah_token: "{{ AH_TOKEN }}"
     ah_validate_certs: "{{ validate_certs | default(false) }}"
     
     # Output directories to avoid colliding with your controller exports
