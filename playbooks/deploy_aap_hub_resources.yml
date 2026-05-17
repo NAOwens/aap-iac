@@ -1,0 +1,91 @@
+---
+- name: Deploy AAP Hub Resources from Infrastructure as Code
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    # Variables passed via Extra Vars at launch
+    ah_host: "{{ new_app_gateway_url }}"
+    ah_token: "{{ my_app_token }}"
+    validate_certs_flag: "{{ validate_certs | default(false) }}"
+    
+    # GitHub Repository Settings
+    git_repo_url: "https://github.com/NAOwens/aap-iac.git"
+    git_clone_dest: "/tmp/aap-hub-iac"
+    
+    # Source directory pointing to the cloned repo
+    iac_source_dir: "{{ git_clone_dest }}/iac-hub-exports"
+
+  collections:
+    - ansible.ah
+
+  pre_tasks:
+    - name: Validate required extra_vars
+      ansible.builtin.assert:
+        that:
+          - ah_host is defined and ah_host != ''
+          - ah_token is defined and ah_token != ''
+        fail_msg: "Both 'new_app_gateway_url' and 'my_app_token' extra_vars must be set!"
+
+    - name: Clone IaC Hub repository from GitHub
+      ansible.builtin.git:
+        repo: "{{ git_repo_url }}"
+        dest: "{{ git_clone_dest }}"
+        version: "main"
+        force: true
+        
+    - name: Check IaC Hub source directory exists in cloned repo
+      ansible.builtin.stat:
+        path: "{{ iac_source_dir }}"
+      register: iac_dir
+      failed_when: not iac_dir.stat.exists
+
+  tasks:
+    # ---------------------------------------------------------
+    # NAMESPACES
+    # ---------------------------------------------------------
+    - name: Load namespace definitions
+      ansible.builtin.set_fact:
+        namespaces: "{{ lookup('file', iac_source_dir ~ '/namespaces/namespaces.yml', errors='ignore') | default('[]', true) | from_yaml }}"
+      ignore_errors: true
+
+    - name: Create or update Namespaces
+      ansible.ah.ah_namespace:
+        ah_host: "{{ ah_host }}"
+        ah_token: "{{ ah_token }}"
+        validate_certs: "{{ validate_certs_flag }}"
+        state: present
+        name: "{{ item.name }}"
+        company: "{{ item.company | default(omit) }}"
+        description: "{{ item.description | default(omit) }}"
+      loop: "{{ namespaces | default([]) }}"
+      register: namespace_deploy
+      ignore_errors: true
+
+    # ---------------------------------------------------------
+    # EXECUTION ENVIRONMENTS
+    # ---------------------------------------------------------
+    - name: Load Execution Environment definitions
+      ansible.builtin.set_fact:
+        ee_repos: "{{ lookup('file', iac_source_dir ~ '/execution_environments/execution_environments.yml', errors='ignore') | default('[]', true) | from_yaml }}"
+      ignore_errors: true
+
+    - name: Create or update Execution Environment Repositories
+      ansible.ah.ah_ee_repository:
+        ah_host: "{{ ah_host }}"
+        ah_token: "{{ ah_token }}"
+        validate_certs: "{{ validate_certs_flag }}"
+        state: present
+        name: "{{ item.name }}"
+        description: "{{ item.description | default(omit) }}"
+      loop: "{{ ee_repos | default([]) }}"
+      register: ee_deploy
+      ignore_errors: true
+
+  post_tasks:
+    - name: Display deployment summary
+      ansible.builtin.debug:
+        msg: |
+          Hub Deployment Summary:
+          - Namespaces created/updated: {{ namespace_deploy.results | length if namespace_deploy.results is defined else 0 }}
+          - Execution Environments created/updated: {{ ee_deploy.results | length if ee_deploy.results is defined else 0 }}
