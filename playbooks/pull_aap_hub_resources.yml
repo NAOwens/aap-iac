@@ -1,0 +1,147 @@
+---
+- name: Pull AAP Hub Resources and Store as Infrastructure as Code
+  hosts: localhost
+  connection: local
+  gather_facts: true
+  vars:
+    # Pointing to your Private Automation Hub
+    ah_host: "https://rhel92.ofam.dev"
+    
+    # Using a dedicated token variable for Hub (or you can reuse the controller token if SSO is linked)
+    ah_token: "{{ lookup('env', 'AH_TOKEN') }}"
+    ah_validate_certs: "{{ validate_certs | default(false) }}"
+    
+    # Output directories to avoid colliding with your controller exports
+    iac_output_dir: "./iac-hub-exports"
+    git_token_variable: "{{ github_token }}"
+
+  pre_tasks:
+    - name: Validate required environment variables
+      ansible.builtin.assert:
+        that:
+          - ah_token is defined and ah_token != ''
+        fail_msg: "AH_TOKEN environment variable must be set"
+
+    - name: Create output directory structure
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - "{{ iac_output_dir }}"
+        - "{{ iac_output_dir }}/namespaces"
+        - "{{ iac_output_dir }}/execution_environments"
+        - "{{ iac_output_dir }}/remotes"
+
+  tasks:
+    # ---------------------------------------------------------
+    # NAMESPACES
+    # ---------------------------------------------------------
+    - name: Pull namespaces from Automation Hub
+      ansible.builtin.uri:
+        url: "{{ ah_host }}/api/galaxy/v3/namespaces/"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ ah_token }}"
+        validate_certs: "{{ ah_validate_certs }}"
+        return_content: true
+      register: namespaces_api
+      ignore_errors: true
+
+    - name: Export namespaces to YAML
+      ansible.builtin.copy:
+        content: "{{ namespaces_api.json.data | to_nice_yaml }}"
+        dest: "{{ iac_output_dir }}/namespaces/namespaces.yml"
+      when: namespaces_api is not failed and namespaces_api.json.data is defined
+
+    # ---------------------------------------------------------
+    # EXECUTION ENVIRONMENTS
+    # ---------------------------------------------------------
+    - name: Pull Execution Environments from Automation Hub
+      ansible.builtin.uri:
+        url: "{{ ah_host }}/api/galaxy/v3/plugin/execution-environments/repositories/"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ ah_token }}"
+        validate_certs: "{{ ah_validate_certs }}"
+        return_content: true
+      register: ee_api
+      ignore_errors: true
+
+    - name: Export Execution Environments to YAML
+      ansible.builtin.copy:
+        content: "{{ ee_api.json.data | to_nice_yaml }}"
+        dest: "{{ iac_output_dir }}/execution_environments/execution_environments.yml"
+      when: ee_api is not failed and ee_api.json.data is defined
+
+    # ---------------------------------------------------------
+    # REMOTES (Remote Collection Registries)
+    # ---------------------------------------------------------
+    - name: Pull Collection Remotes from Automation Hub
+      ansible.builtin.uri:
+        url: "{{ ah_host }}/api/galaxy/v3/remotes/"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ ah_token }}"
+        validate_certs: "{{ ah_validate_certs }}"
+        return_content: true
+      register: remotes_api
+      ignore_errors: true
+
+    - name: Export Remotes to YAML
+      ansible.builtin.copy:
+        content: "{{ remotes_api.json.data | to_nice_yaml }}"
+        dest: "{{ iac_output_dir }}/remotes/remotes.yml"
+      when: remotes_api is not failed and remotes_api.json.data is defined
+
+  post_tasks:
+    - name: Create summary report
+      ansible.builtin.copy:
+        content: |
+          # AAP Hub Resource Export Summary
+          Generated: {{ ansible_date_time.iso8601 }}
+          Hub Host: {{ ah_host }}
+          
+          ## Exported Resources
+          - Namespaces: {{ namespaces_api.json.data | length | default(0) }}
+          - Execution Environments: {{ ee_api.json.data | length | default(0) }}
+          - Remotes: {{ remotes_api.json.data | length | default(0) }}
+          
+          ## Location
+          Export directory: {{ iac_output_dir }}
+        dest: "{{ iac_output_dir }}/EXPORT_SUMMARY.md"
+
+    - name: Display export summary
+      ansible.builtin.debug:
+        msg: "Hub resources exported to {{ iac_output_dir }}"
+
+    # Storing clone in a different /tmp folder to avoid conflicts with Controller git clones
+    - name: Clone the CaC repository
+      ansible.builtin.git:
+        repo: 'https://{{ git_token_variable }}@github.com/NAOwens/aap-iac.git' 
+        dest: /tmp/cac_hub_repo
+        version: main
+        accept_hostkey: true 
+
+    - name: Copy exported Hub files to the git repository
+      ansible.builtin.copy:
+        src: "{{ iac_output_dir }}/"
+        dest: /tmp/cac_hub_repo/iac-hub-exports/
+        remote_src: true
+
+    - name: Add, commit, and push exported files to Git
+      ansible.builtin.shell: |
+        git config user.email "owensna7@gmail.com"
+        git config user.name "NAOwens"
+        git remote set-url origin https://NAOwens:{{ git_token_variable }}@github.com/NAOwens/aap-iac.git
+        git add .
+        git commit -m "Automated AAP Hub resource export"
+        git push origin main
+      args:
+        chdir: /tmp/cac_hub_repo
+      environment:
+        GIT_TERMINAL_PROMPT: "0"  # Forces Git to fail instead of hanging!
+      register: git_result
+      failed_when: 
+        - git_result.rc != 0
+        - "'nothing to commit' not in git_result.stdout"
