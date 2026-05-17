@@ -20,12 +20,12 @@
     - ansible.hub
 
   pre_tasks:
-    - name: Validate required extra_vars
-      ansible.builtin.assert:
-        that:
-          - ah_host is defined and ah_host != ''
-          - ah_token is defined and ah_token != ''
-        fail_msg: "Both 'new_app_gateway_url' and 'my_app_token' extra_vars must be set!"
+#    - name: Validate required extra_vars
+#      ansible.builtin.assert:
+#        that:
+#          - ah_host is defined and ah_host != ''
+#          - ah_token is defined and ah_token != ''
+#        fail_msg: "Both 'new_app_gateway_url' and 'my_app_token' extra_vars must be set!"
 
     - name: Clone IaC Hub repository from GitHub
       ansible.builtin.git:
