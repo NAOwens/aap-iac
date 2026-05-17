@@ -43,7 +43,7 @@
         url: "{{ ah_host }}/api/galaxy/v3/namespaces/"
         method: GET
         headers:
-          Authorization: "Bearer {{ ah_token }}"
+          Authorization: "Token {{ ah_token }}"
         validate_certs: "{{ ah_validate_certs }}"
         return_content: true
       register: namespaces_api
@@ -51,9 +51,10 @@
 
     - name: Export namespaces to YAML
       ansible.builtin.copy:
-        content: "{{ namespaces_api.json.data | to_nice_yaml }}"
+        # Fallback to .results or the raw json if .data doesn't exist
+        content: "{{ namespaces_api.json.data | default(namespaces_api.json.results | default(namespaces_api.json)) | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/namespaces/namespaces.yml"
-      when: namespaces_api is not failed and namespaces_api.json.data is defined
+      when: namespaces_api is not failed
 
     # ---------------------------------------------------------
     # EXECUTION ENVIRONMENTS
@@ -63,7 +64,7 @@
         url: "{{ ah_host }}/api/galaxy/v3/plugin/execution-environments/repositories/"
         method: GET
         headers:
-          Authorization: "Bearer {{ ah_token }}"
+          Authorization: "Token {{ ah_token }}"
         validate_certs: "{{ ah_validate_certs }}"
         return_content: true
       register: ee_api
@@ -71,19 +72,19 @@
 
     - name: Export Execution Environments to YAML
       ansible.builtin.copy:
-        content: "{{ ee_api.json.data | to_nice_yaml }}"
+        content: "{{ ee_api.json.data | default(ee_api.json.results | default(ee_api.json)) | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/execution_environments/execution_environments.yml"
-      when: ee_api is not failed and ee_api.json.data is defined
+      when: ee_api is not failed
 
     # ---------------------------------------------------------
     # REMOTES (Remote Collection Registries)
     # ---------------------------------------------------------
     - name: Pull Collection Remotes from Automation Hub
       ansible.builtin.uri:
-        url: "{{ ah_host }}/api/galaxy/v3/remotes/"
+        url: "{{ ah_host }}/api/galaxy/_ui/v1/remotes/"
         method: GET
         headers:
-          Authorization: "Bearer {{ ah_token }}"
+          Authorization: "Token {{ ah_token }}"
         validate_certs: "{{ ah_validate_certs }}"
         return_content: true
       register: remotes_api
@@ -91,9 +92,9 @@
 
     - name: Export Remotes to YAML
       ansible.builtin.copy:
-        content: "{{ remotes_api.json.data | to_nice_yaml }}"
+        content: "{{ remotes_api.json.data | default(remotes_api.json.results | default(remotes_api.json)) | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/remotes/remotes.yml"
-      when: remotes_api is not failed and remotes_api.json.data is defined
+      when: remotes_api is not failed
 
   post_tasks:
     - name: Create summary report
@@ -104,9 +105,9 @@
           Hub Host: {{ ah_host }}
           
           ## Exported Resources
-          - Namespaces: {{ namespaces_api.json.data | length | default(0) }}
-          - Execution Environments: {{ ee_api.json.data | length | default(0) }}
-          - Remotes: {{ remotes_api.json.data | length | default(0) }}
+          - Namespaces: {{ namespaces_api.json.data | default(namespaces_api.json.results | default([])) | length if namespaces_api is not failed else 'Failed to pull' }}
+          - Execution Environments: {{ ee_api.json.data | default(ee_api.json.results | default([])) | length if ee_api is not failed else 'Failed to pull' }}
+          - Remotes: {{ remotes_api.json.data | default(remotes_api.json.results | default([])) | length if remotes_api is not failed else 'Failed to pull' }}
           
           ## Location
           Export directory: {{ iac_output_dir }}
