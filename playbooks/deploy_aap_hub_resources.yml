@@ -50,7 +50,7 @@
       ignore_errors: true
 
     - name: Create or update Namespaces
-      ansible.ah.ah_namespace:
+      ansible.hub.ah_namespace:
         ah_host: "{{ ah_host }}"
         ah_token: "{{ ah_token }}"
         validate_certs: "{{ validate_certs_flag }}"
@@ -71,7 +71,7 @@
       ignore_errors: true
 
     - name: Create or update Execution Environment Repositories
-      ansible.ah.ah_ee_repository:
+      ansible.hub.ah_ee_repository:
         ah_host: "{{ ah_host }}"
         ah_token: "{{ ah_token }}"
         validate_certs: "{{ validate_certs_flag }}"
