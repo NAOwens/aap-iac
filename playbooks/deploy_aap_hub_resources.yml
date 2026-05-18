@@ -5,8 +5,8 @@
   gather_facts: false
   vars:
     # Variables passed via Extra Vars at launch
-    ah_host: "{{ new_app_gateway_url }}"
-    ah_token: "{{ my_app_token }}"
+    ah_host: "{{ new_aap_gateway_url }}"
+    ah_token: "{{ my_aap_token }}"
     validate_certs_flag: "{{ validate_certs | default(false) }}"
     
     # GitHub Repository Settings
@@ -20,12 +20,12 @@
     - ansible.hub
 
   pre_tasks:
-#    - name: Validate required extra_vars
-#      ansible.builtin.assert:
-#        that:
-#          - ah_host is defined and ah_host != ''
-#          - ah_token is defined and ah_token != ''
-#        fail_msg: "Both 'new_app_gateway_url' and 'my_app_token' extra_vars must be set!"
+    - name: Validate required extra_vars
+      ansible.builtin.assert:
+        that:
+          - ah_host is defined and ah_host != ''
+          - ah_token is defined and ah_token != ''
+        fail_msg: "Both 'new_aap_gateway_url' and 'my_aap_token' extra_vars must be set!"
 
     - name: Clone IaC Hub repository from GitHub
       ansible.builtin.git:
