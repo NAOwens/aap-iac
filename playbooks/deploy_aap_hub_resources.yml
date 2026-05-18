@@ -63,7 +63,7 @@
       register: namespace_deploy
       ignore_errors: true
 
-    # ---------------------------------------------------------
+# ---------------------------------------------------------
     # 2. EXECUTION ENVIRONMENT REPOSITORIES
     # ---------------------------------------------------------
     - name: Load Execution Environment definitions
@@ -73,7 +73,7 @@
 
     - name: Create EE Repository (Pulp API)
       ansible.builtin.uri:
-        url: "{{ ah_host }}/api/galaxy/pulp/api/v3/repositories/container/container-push/"
+        url: "{{ ah_host }}/api/galaxy/pulp/api/v3/repositories/container/container/" # <-- Updated to standard container repo
         method: POST
         headers:
           Authorization: "Bearer {{ ah_token }}"
@@ -89,7 +89,7 @@
 
     - name: Get EE Repository HREF
       ansible.builtin.uri:
-        url: "{{ ah_host }}/api/galaxy/pulp/api/v3/repositories/container/container-push/?name={{ item.name | urlencode }}"
+        url: "{{ ah_host }}/api/galaxy/pulp/api/v3/repositories/container/container/?name={{ item.name | urlencode }}" # <-- Updated to standard container repo
         method: GET
         headers:
           Authorization: "Bearer {{ ah_token }}"
@@ -138,17 +138,9 @@
         body:
           name: "{{ item.name }}"
           url: "{{ item.url }}"
+          requirements_file: "{{ item.requirements_file | default('') }}" # <-- Added required field
         validate_certs: "{{ validate_certs_flag }}"
         status_code: [201, 400, 409]
       loop: "{{ remotes | default([]) }}"
       register: remote_deploy
       ignore_errors: true
-
-  post_tasks:
-    - name: Display deployment summary
-      ansible.builtin.debug:
-        msg: |
-          Hub Deployment Summary:
-          - Namespaces processed: {{ namespace_deploy.results | length if namespace_deploy.results is defined else 0 }}
-          - EE Repositories processed: {{ ee_deploy.results | length if ee_deploy.results is defined else 0 }}
-          - Remote Registries processed: {{ remote_deploy.results | length if remote_deploy.results is defined else 0 }}
