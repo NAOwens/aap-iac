@@ -73,7 +73,7 @@
 
     - name: Create Execution Environment Repositories via API
       ansible.builtin.uri:
-        url: "{{ ah_host }}/api/galaxy/v3/plugin/execution-environments/repositories/"
+        url: "{{ ah_host }}/api/galaxy/_ui/v1/execution-environments/repositories/" # <-- Updated Endpoint
         method: POST
         headers:
           Authorization: "Bearer {{ ah_token }}"
