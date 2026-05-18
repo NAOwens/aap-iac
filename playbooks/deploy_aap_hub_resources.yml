@@ -16,9 +16,6 @@
     # Source directory pointing to the cloned repo
     iac_source_dir: "{{ git_clone_dest }}/iac-hub-exports"
 
-  collections:
-    - ansible.hub
-
   pre_tasks:
     - name: Validate required extra_vars
       ansible.builtin.assert:
@@ -49,15 +46,19 @@
         namespaces: "{{ lookup('file', iac_source_dir ~ '/namespaces/namespaces.yml', errors='ignore') | default('[]', true) | from_yaml }}"
       ignore_errors: true
 
-    - name: Create or update Namespaces
-      ansible.hub.ah_namespace:
-        ah_host: "{{ ah_host }}"
-        ah_token: "{{ ah_token }}"
+    - name: Create or update Namespaces via API
+      ansible.builtin.uri:
+        url: "{{ ah_host }}/api/galaxy/v3/namespaces/"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ ah_token }}"
+        body_format: json
+        body:
+          name: "{{ item.name }}"
+          company: "{{ item.company | default('') }}"
+          description: "{{ item.description | default('') }}"
         validate_certs: "{{ validate_certs_flag }}"
-        state: present
-        name: "{{ item.name }}"
-        company: "{{ item.company | default(omit) }}"
-        description: "{{ item.description | default(omit) }}"
+        status_code: [200, 201, 400, 409] # Accepts success, created, or already exists
       loop: "{{ namespaces | default([]) }}"
       register: namespace_deploy
       ignore_errors: true
@@ -70,14 +71,18 @@
         ee_repos: "{{ lookup('file', iac_source_dir ~ '/execution_environments/execution_environments.yml', errors='ignore') | default('[]', true) | from_yaml }}"
       ignore_errors: true
 
-    - name: Create or update Execution Environment Repositories
-      ansible.hub.ah_ee_repository:
-        ah_host: "{{ ah_host }}"
-        ah_token: "{{ ah_token }}"
+    - name: Create Execution Environment Repositories via API
+      ansible.builtin.uri:
+        url: "{{ ah_host }}/api/galaxy/v3/plugin/execution-environments/repositories/"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ ah_token }}"
+        body_format: json
+        body:
+          name: "{{ item.name }}"
+          description: "{{ item.description | default('') }}"
         validate_certs: "{{ validate_certs_flag }}"
-        state: present
-        name: "{{ item.name }}"
-        description: "{{ item.description | default(omit) }}"
+        status_code: [200, 201, 400, 409] # Accepts success, created, or already exists
       loop: "{{ ee_repos | default([]) }}"
       register: ee_deploy
       ignore_errors: true
@@ -87,5 +92,5 @@
       ansible.builtin.debug:
         msg: |
           Hub Deployment Summary:
-          - Namespaces created/updated: {{ namespace_deploy.results | length if namespace_deploy.results is defined else 0 }}
-          - Execution Environments created/updated: {{ ee_deploy.results | length if ee_deploy.results is defined else 0 }}
+          - Namespaces processed: {{ namespace_deploy.results | length if namespace_deploy.results is defined else 0 }}
+          - Execution Environments processed: {{ ee_deploy.results | length if ee_deploy.results is defined else 0 }}
