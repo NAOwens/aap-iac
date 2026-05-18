@@ -39,7 +39,7 @@
 
   tasks:
     # ---------------------------------------------------------
-    # 1. NAMESPACES
+    # 1. NAMESPACES.
     # ---------------------------------------------------------
     - name: Load namespace definitions
       ansible.builtin.set_fact:
