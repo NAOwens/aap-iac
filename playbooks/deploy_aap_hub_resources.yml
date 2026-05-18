@@ -138,18 +138,19 @@
         body:
           name: "{{ item.name }}"
           url: "{{ item.url }}"
-          requirements_file: "{{ item.requirements_file | default('', true) }}"
-          auth_url: "{{ item.auth_url | default('', true) }}"
-          ca_cert: "{{ item.ca_cert | default('', true) }}"
-          client_cert: "{{ item.client_cert | default('', true) }}"
-          client_key: "{{ item.client_key | default('', true) }}"
-          proxy_url: "{{ item.proxy_url | default('', true) }}"
-          proxy_username: "{{ item.proxy_username | default('', true) }}"
-          proxy_password: "{{ item.proxy_password | default('', true) }}"
-          tls_validation: "{{ item.tls_validation | default(false, true) }}"
-          rate_limit: "{{ item.rate_limit | default(0, true) }}"
+          # If empty or null, Ansible will strip these keys out of the JSON entirely
+          requirements_file: "{{ item.requirements_file | default(omit, true) }}"
+          auth_url: "{{ item.auth_url | default(omit, true) }}"
+          ca_cert: "{{ item.ca_cert | default(omit, true) }}"
+          client_cert: "{{ item.client_cert | default(omit, true) }}"
+          client_key: "{{ item.client_key | default(omit, true) }}"
+          proxy_url: "{{ item.proxy_url | default(omit, true) }}"
+          proxy_username: "{{ item.proxy_username | default(omit, true) }}"
+          proxy_password: "{{ item.proxy_password | default(omit, true) }}"
+          tls_validation: "{{ omit if item.tls_validation is none else item.tls_validation }}"
+          rate_limit: "{{ omit if item.rate_limit is none else item.rate_limit }}"
         validate_certs: "{{ validate_certs_flag }}"
-        status_code: [201, 409] # Accepts 201 Created or 409 Already Exists
+        status_code: [201, 400, 409] # Accepts 201 Created or 400/409 Already Exists
       loop: "{{ remotes | default([]) }}"
       register: remote_deploy
       ignore_errors: true
