@@ -17,7 +17,7 @@ By leveraging native Ansible modules and targeted API orchestration, these playb
 **Output Directory:** `./iac-exports/`
 
 **Key Features:**
-* Automatically translates rigid database IDs (e.g., `organization: 2`) into portable string names (e.g., `organization: "Ofam"`).
+* Automatically translates rigid database IDs (e.g., `organization: 2`) into portable string names (e.g., `organization: "Org1"`).
 * Safely excludes sensitive credential payloads (passwords, keys, tokens).
 * Automatically commits and pushes the generated YAML files back to this GitHub repository.
 
@@ -55,7 +55,7 @@ By leveraging native Ansible modules and targeted API orchestration, these playb
 * Authenticates using the strict `Token <hash>` header required by standalone Hubs.
 
 **Required Variables / Environment Variables:**
-* `ah_host` (e.g., `https://rhel92.ofam.dev`)
+* `ah_host` (e.g., `https://hub.example.com`)
 * `ah_token` (Hub-specific Token)
 
 ---
