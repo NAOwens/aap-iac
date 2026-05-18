@@ -207,7 +207,7 @@
         related_field_counts:
             admins: 1
             inventories: 2
-            job_templates: 10
+            job_templates: 12
             projects: 5
             teams: 3
             users: 3
