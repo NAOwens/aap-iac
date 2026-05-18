@@ -4,7 +4,7 @@
   connection: local
   gather_facts: true
   vars:
-    # Pointing to your Private Automation Hub.
+    # Pointing to your Private Automation Hub
     ah_host: "https://rhel92.ofam.dev"
     
     # Using a dedicated token variable for Hub (or you can reuse the controller token if SSO is linked)
