@@ -1,355 +1,92 @@
-# AAP Infrastructure as Code (AAP-IaC)
+# Ansible Automation Platform (AAP) Infrastructure as Code (IaC)
 
-A comprehensive Ansible automation solution for managing Ansible Automation Platform (AAP) resources through Infrastructure as Code (IaC) principles. This repository provides playbooks to export AAP resources and deploy them to other environments for consistent, version-controlled resource management.
+This repository contains the Infrastructure as Code (IaC) playbooks required to backup, migrate, and deploy Ansible Automation Platform (AAP) resources. It is specifically designed to handle migrations from older, standalone AAP architectures into a modernized **AAP 2.6 OpenShift environment** utilizing the unified Automation Gateway.
 
 ## Overview
 
-The AAP-IaC project enables organizations to:
-- **Export** AAP Controller configurations as YAML files
-- **Version control** all AAP resource definitions
-- **Deploy** resources consistently across multiple environments
-- **Manage** organizations, users, teams, projects, credentials, inventories, job templates, workflows, and notification templates
+This toolset is broken down into four primary playbooks: two for pulling (exporting) data from your existing environment, and two for deploying (restoring/migrating) that data into your new environment. 
 
-## Repository Structure
-
-```
-aap-iac/
-├── README.md                          # This file
-├── requirements.yml                   # Ansible collection dependencies
-└── playbooks/
-    ├── pull_aap_resources.yml         # Export/backup playbook
-    └── deploy_aap_resources.yml       # Deploy/restore playbook
-```
-
-## Prerequisites
-
-- Ansible 2.9+ installed
-- Python 3.6+
-- Access to Ansible Automation Platform Controller
-- Valid AAP Controller credentials
-- Required Ansible collections (see below)
-
-## Installation
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/NAOwens/aap-iac.git
-cd aap-iac
-```
-
-### 2. Install Required Collections
-
-Install the required Ansible collections specified in `requirements.yml`:
-
-```bash
-ansible-galaxy collection install -r requirements.yml
-```
-
-### 3. Set Environment Variables
-
-Set your AAP Controller credentials and URL:
-
-```bash
-export AAP_USERNAME="your_aap_username"
-export AAP_PASSWORD="your_aap_password"
-export AAP_CONTROLLER_URL="https://your-controller.example.com"
-```
-
-## Playbooks
-
-### 1. `pull_aap_resources.yml` - Export/Backup Playbook
-
-**Purpose:** Extracts all AAP Controller resources and exports them as YAML files for version control.
-
-**What it exports:**
-- Organizations
-- Users
-- Teams
-- Credentials (metadata only - sensitive data excluded)
-- Projects
-- Inventories
-- Job Templates
-- Workflow Templates
-- Notification Templates
-
-**Output:** Creates timestamped YAML files in the `./iac-exports/` directory structure
-
-**Key Features:**
-- Validates AAP Controller credentials
-- Creates organized directory structure
-- Generates export summary report
-- Excludes sensitive credential data for security
-- Timestamped exports for historical tracking
-- Error handling with graceful degradation
-
-**Usage:**
-
-```bash
-ansible-playbook playbooks/pull_aap_resources.yml
-```
-
-**Optional variables:**
-
-```bash
-ansible-playbook playbooks/pull_aap_resources.yml \
-  -e "aap_controller_url=https://custom-controller.com" \
-  -e "validate_certs=false"
-```
-
-**Output Structure:**
-```
-iac-exports/
-├── organizations/
-│   └── organizations_YYYYMMDDTHHMMSS.yml
-├── users/
-│   └── users_YYYYMMDDTHHMMSS.yml
-├── teams/
-│   └── teams_YYYYMMDDTHHMMSS.yml
-├── credentials/
-│   └── credentials_metadata_YYYYMMDDTHHMMSS.yml
-├── projects/
-│   └── projects_YYYYMMDDTHHMMSS.yml
-├── inventories/
-│   └── inventories_YYYYMMDDTHHMMSS.yml
-├── job_templates/
-│   └── job_templates_YYYYMMDDTHHMMSS.yml
-├── workflows/
-│   └── workflows_YYYYMMDDTHHMMSS.yml
-├── notification_templates/
-│   └── notifications_YYYYMMDDTHHMMSS.yml
-└── EXPORT_SUMMARY_YYYYMMDDTHHMMSS.md
-```
+By leveraging native Ansible modules and targeted API orchestration, these playbooks dynamically map relational database IDs to string names, ensuring your exported configurations are 100% portable across different AAP instances.
 
 ---
 
-### 2. `deploy_aap_resources.yml` - Deploy Playbook
+## 1. Controller Pull Playbook (`pull_aap_resources.yml`)
 
-**Purpose:** Deploys AAP resources from exported YAML files to an AAP Controller instance.
-
-**What it deploys:**
-- Organizations
-- Users
-- Teams
-- Projects
-
-**Input:** Reads from `./iac-exports/` directory (output of `pull_aap_resources.yml`)
+**Purpose:** Extracts all primary Controller components and commits them to version control.
+**Exported Resources:** Organizations, Users, Teams, Projects, Inventories, Inventory Sources, Hosts, Job Templates, Workflow Templates, and Notification Templates.
+**Output Directory:** `./iac-exports/`
 
 **Key Features:**
-- Validates required credentials
-- Checks source directory exists
-- Creates or updates resources in idempotent manner
-- Error handling for graceful failure recovery
-- Displays deployment summary upon completion
-- Supports custom AAP Controller URLs
+* Automatically translates rigid database IDs (e.g., `organization: 2`) into portable string names (e.g., `organization: "Ofam"`).
+* Safely excludes sensitive credential payloads (passwords, keys, tokens).
+* Automatically commits and pushes the generated YAML files back to this GitHub repository.
 
-**Usage:**
-
-```bash
-ansible-playbook playbooks/deploy_aap_resources.yml
-```
-
-**Optional variables:**
-
-```bash
-ansible-playbook playbooks/deploy_aap_resources.yml \
-  -e "aap_controller_url=https://target-controller.com" \
-  -e "validate_certs=false" \
-  -e "iac_source_dir=./iac-exports"
-```
-
-**Deployment Summary Output:**
-```
-Deployment Summary:
-- Organizations created/updated: X
-- Users created/updated: X
-- Teams created/updated: X
-- Projects created/updated: X
-```
-
-## Configuration
-
-### Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `AAP_USERNAME` | AAP Controller username | Required |
-| `AAP_PASSWORD` | AAP Controller password | Required |
-| `AAP_CONTROLLER_URL` | AAP Controller URL | `https://controller.example.com` |
-| `validate_certs` | Validate SSL certificates | `true` |
-
-### Playbook Variables
-
-#### pull_aap_resources.yml
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `aap_controller_host` | Controller hostname | From environment or default |
-| `aap_controller_username` | Controller username | From `AAP_USERNAME` env var |
-| `aap_controller_password` | Controller password | From `AAP_PASSWORD` env var |
-| `aap_controller_validate_certs` | Validate SSL certs | `true` |
-| `iac_output_dir` | Export output directory | `./iac-exports` |
-
-#### deploy_aap_resources.yml
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `aap_controller_host` | Controller hostname | From environment or default |
-| `aap_controller_username` | Controller username | From `AAP_USERNAME` env var |
-| `aap_controller_password` | Controller password | From `AAP_PASSWORD` env var |
-| `aap_controller_validate_certs` | Validate SSL certs | `true` |
-| `iac_source_dir` | Input directory | `./iac-exports` |
-
-## Common Workflows
-
-### Backup AAP Configuration
-
-```bash
-# Set your AAP credentials
-export AAP_USERNAME="admin"
-export AAP_PASSWORD="password"
-export AAP_CONTROLLER_URL="https://aap-prod.example.com"
-
-# Export all resources
-ansible-playbook playbooks/pull_aap_resources.yml
-
-# Review and commit to git
-git add iac-exports/
-git commit -m "Backup AAP production configuration"
-git push
-```
-
-### Migrate Resources Between Environments
-
-```bash
-# Export from production
-export AAP_USERNAME="admin"
-export AAP_PASSWORD="prod_password"
-export AAP_CONTROLLER_URL="https://aap-prod.example.com"
-
-ansible-playbook playbooks/pull_aap_resources.yml
-
-# Deploy to staging
-export AAP_USERNAME="admin"
-export AAP_PASSWORD="staging_password"
-export AAP_CONTROLLER_URL="https://aap-staging.example.com"
-
-ansible-playbook playbooks/deploy_aap_resources.yml
-```
-
-### Disaster Recovery
-
-```bash
-# Restore from git history
-git checkout <commit-hash>
-
-# Deploy to new AAP instance
-export AAP_USERNAME="admin"
-export AAP_PASSWORD="new_password"
-export AAP_CONTROLLER_URL="https://aap-new.example.com"
-
-ansible-playbook playbooks/deploy_aap_resources.yml
-```
-
-## Security Considerations
-
-⚠️ **Important Security Notes:**
-
-1. **Credential Management:**
-   - Sensitive credential data (passwords, API tokens) is **NOT** exported by the pull playbook
-   - Credentials must be re-created manually or through secure automation
-   - Consider using Ansible Vault for storing sensitive variables
-
-2. **Environment Variables:**
-   - Never commit AAP credentials to git
-   - Use `.gitignore` to exclude credential files
-   - Consider using credential management tools (AWS Secrets Manager, HashiCorp Vault, etc.)
-
-3. **SSL Certificate Validation:**
-   - Always validate SSL certificates in production (`validate_certs: true`)
-   - Only disable certificate validation for development/testing
-
-4. **Version Control:**
-   - Use `.gitignore` to exclude:
-     ```
-     iac-exports/credentials/
-     .env
-     *.vault
-     ```
-
-## Troubleshooting
-
-### Connection Issues
-
-**Error:** `Failed to connect to AAP Controller`
-
-**Solution:**
-- Verify AAP Controller URL: `curl https://your-controller.example.com`
-- Check firewall/network connectivity
-- Verify SSL certificates if validation is enabled
-
-### Authentication Failures
-
-**Error:** `Authentication failed`
-
-**Solution:**
-- Verify `AAP_USERNAME` and `AAP_PASSWORD` are set correctly
-- Confirm user has appropriate permissions in AAP
-- Check AAP Controller logs for authentication errors
-
-### Missing Collections
-
-**Error:** `ERROR! Collection awx.awx not found`
-
-**Solution:**
-```bash
-ansible-galaxy collection install -r requirements.yml --force
-```
-
-### Directory Not Found
-
-**Error:** `Check IaC source directory exists - FAILED`
-
-**Solution:**
-- First run `pull_aap_resources.yml` to create export directory
-- Verify path in `iac_source_dir` variable
-
-## Ansible Collections
-
-This project uses the following Ansible collections:
-
-- **awx.awx** (≥24.0.0) - AWX collection for AAP resource management
-- **ansible.controller** - Ansible Controller modules for resource deployment
-
-## Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/improvement`)
-3. Commit your changes (`git commit -m 'Add improvement'`)
-4. Push to the branch (`git push origin feature/improvement`)
-5. Open a Pull Request
-
-## Support
-
-For issues and questions:
-
-1. Check existing GitHub issues
-2. Review AAP documentation: https://docs.ansible.com/automation-controller/
-3. Consult Ansible collection documentation
-4. Open a new GitHub issue with detailed information
-
-## License
-
-This project is licensed under the MIT License - see LICENSE file for details.
-
-## Disclaimer
-
-This project is provided as-is. Always test in non-production environments before deploying to production AAP instances. Backup your AAP Controller configuration before running deployment playbooks.
+**Required Variables / Environment Variables:**
+* `CONTROLLER_HOST`
+* `CONTROLLER_OAUTH_TOKEN`
+* `github_token` (for committing exports)
 
 ---
 
-**Last Updated:** 2026-05-08
+## 2. Controller Deploy Playbook (`deploy_aap_resources.yml`)
 
-**Repository:** https://github.com/NAOwens/aap-iac
+**Purpose:** Deploys the Controller IaC YAML files into the new AAP 2.6 environment.
+
+**Key Features:**
+* Uses `ansible.platform` and `ansible.controller` collections.
+* Deploys the foundational RBAC structure (Organizations, Users, Teams) before attaching execution resources.
+* Includes intelligent omission logic (using `default(omit)`) to bypass strict API validation errors on empty variables or null relationships.
+
+**Required Extra Vars:**
+* `new_aap_gateway_url` (The AAP 2.6 Gateway Route)
+* `my_aap_token` (OAuth2 token generated from the Gateway)
+* `aap_password` (Required for the `ansible.platform` modules executing Basic Auth)
+
+---
+
+## 3. Hub Pull Playbook (`pull_aap_hub_resources.yml`)
+
+**Purpose:** Extracts structural configurations from your standalone Private Automation Hub.
+**Exported Resources:** Namespaces, Execution Environment Repositories, and Remote Collection Registries.
+**Output Directory:** `./iac-hub-exports/`
+
+**Key Features:**
+* Uses `ansible.builtin.uri` to interface directly with the Galaxy NG / Pulp backend.
+* Authenticates using the strict `Token <hash>` header required by standalone Hubs.
+
+**Required Variables / Environment Variables:**
+* `ah_host` (e.g., `https://rhel92.ofam.dev`)
+* `ah_token` (Hub-specific Token)
+
+---
+
+## 4. Hub Deploy Playbook (`deploy_aap_hub_resources.yml`)
+
+**Purpose:** Deploys the Hub IaC YAML files into the new AAP 2.6 environment via the Automation Gateway.
+
+**Key Features:**
+* Specially crafted to orchestrate the backend **Pulp API** directly through the AAP Gateway proxy.
+* Bypasses the Gateway's strict `POST` method blocks and `ansible.hub` header limitations by forcing the `Authorization: Bearer` header on native `uri` tasks.
+* Highly idempotent: Automatically catches and safely ignores `409 Already Exists` and `400 Bad Request` uniqueness conflicts.
+
+**Required Extra Vars:**
+* `new_aap_gateway_url` (The AAP 2.6 Gateway Route)
+* `my_aap_token` (OAuth2 token generated from the Gateway)
+
+---
+
+## Workflow / Order of Operations
+
+When performing a full environment sync or migration, execute the playbooks in the following order:
+
+1. **Pull Hub Data** (`pull_aap_hub_resources.yml`) - Extracts Hub architecture to Git.
+2. **Pull Controller Data** (`pull_aap_resources.yml`) - Extracts Controller architecture to Git.
+3. *Manual Step:* Create missing Credentials in the new environment (e.g., Satellite Credentials, GitHub PATs).
+4. **Deploy Hub Data** (`deploy_aap_hub_resources.yml`) - Builds the Hub namespaces and repos.
+5. *Manual Step:* Push your custom Execution Environment container images (via Podman/Docker) to the newly created Hub repositories.
+6. **Deploy Controller Data** (`deploy_aap_resources.yml`) - Builds the Controller configuration and links Job Templates to the new Hub Execution Environments.
+
+## Known Architectural Quirks Managed by this Codebase
+* **Gateway Token Routing:** AAP 2.6 collapses services behind a single Gateway proxy. These playbooks handle the required transition from standard Hub `Token` headers to Gateway `Bearer` headers.
+* **Empty Variables:** Replaces empty strings or `---` YAML markers with `omit` to prevent 400 Bad Request errors.
+* **Inventory Linking:** Prevents ambiguous duplicate inventory lookup failures by defaulting missing inventories to force a prompt-on-launch.
