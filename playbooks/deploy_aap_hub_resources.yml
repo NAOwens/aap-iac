@@ -64,16 +64,16 @@
       ignore_errors: true
 
     # ---------------------------------------------------------
-    # EXECUTION ENVIRONMENTS
+    # EXECUTION ENVIRONMENTS (Via Pulp Backend)
     # ---------------------------------------------------------
     - name: Load Execution Environment definitions
       ansible.builtin.set_fact:
         ee_repos: "{{ lookup('file', iac_source_dir ~ '/execution_environments/execution_environments.yml', errors='ignore') | default('[]', true) | from_yaml }}"
       ignore_errors: true
 
-    - name: Create Execution Environment Repositories via API
+    - name: Create EE Repository (Pulp API)
       ansible.builtin.uri:
-        url: "{{ ah_host }}/api/galaxy/_ui/v1/execution-environments/repositories/" # <-- Updated Endpoint
+        url: "{{ ah_host }}/api/galaxy/pulp/api/v3/repositories/container/container-push/"
         method: POST
         headers:
           Authorization: "Bearer {{ ah_token }}"
@@ -82,15 +82,40 @@
           name: "{{ item.name }}"
           description: "{{ item.description | default('') }}"
         validate_certs: "{{ validate_certs_flag }}"
-        status_code: [200, 201, 400, 409] # Accepts success, created, or already exists
+        status_code: [201, 400, 409] # Accepts success or already exists
       loop: "{{ ee_repos | default([]) }}"
-      register: ee_deploy
+      register: pulp_repo
       ignore_errors: true
 
-  post_tasks:
-    - name: Display deployment summary
-      ansible.builtin.debug:
-        msg: |
-          Hub Deployment Summary:
-          - Namespaces processed: {{ namespace_deploy.results | length if namespace_deploy.results is defined else 0 }}
-          - Execution Environments processed: {{ ee_deploy.results | length if ee_deploy.results is defined else 0 }}
+    - name: Get EE Repository HREF
+      ansible.builtin.uri:
+        url: "{{ ah_host }}/api/galaxy/pulp/api/v3/repositories/container/?name={{ item.name | urlencode }}"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ ah_token }}"
+        validate_certs: "{{ validate_certs_flag }}"
+      loop: "{{ ee_repos | default([]) }}"
+      register: repo_get
+      ignore_errors: true
+
+    - name: Create EE Distribution (Pulp API)
+      ansible.builtin.uri:
+        url: "{{ ah_host }}/api/galaxy/pulp/api/v3/distributions/container/container/"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ ah_token }}"
+        body_format: json
+        body:
+          name: "{{ item.name }}"
+          base_path: "{{ item.name }}"
+          repository: "{{ repo_get.results[ansible_loop.index0].json.results[0].pulp_href }}"
+        validate_certs: "{{ validate_certs_flag }}"
+        status_code: [201, 400, 409] # Accepts success or already exists
+      loop: "{{ ee_repos | default([]) }}"
+      loop_control:
+        extended: true
+      register: ee_deploy
+      ignore_errors: true
+      when: 
+        - repo_get.results[ansible_loop.index0].json.results is defined 
+        - repo_get.results[ansible_loop.index0].json.results | length > 0
