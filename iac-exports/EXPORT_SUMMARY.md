@@ -1,15 +1,15 @@
 # AAP Resource Export Summary
-Generated: 2026-05-16T21:50:51Z
+Generated: 2026-05-18T14:40:49Z
 Controller: aap.ofam.dev
 
 ## Exported Resources
 - Organizations: 2
 - Users: 4
 - Teams: 3
-- Credentials: 15
+- Credentials: 16
 - Projects: 6
 - Inventories: 2
-- Job Templates: 10
+- Job Templates: 12
 - Workflow Templates: 0
 - Notification Templates: 0
 

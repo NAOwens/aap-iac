@@ -93,9 +93,9 @@
     description: ''
     id: 9
     last_job_failed: false
-    last_job_run: '2025-09-20T21:40:33.352282Z'
+    last_job_run: '2026-05-17T23:31:55.800358Z'
     last_update_failed: false
-    last_updated: '2025-09-20T21:40:33.352282Z'
+    last_updated: '2026-05-17T23:31:55.800358Z'
     local_path: _9__sat_coll
     modified: '2023-11-01T00:18:43.694399Z'
     name: Sat-coll
@@ -107,6 +107,8 @@
         copy: /api/v2/projects/9/copy/
         created_by: /api/v2/users/1/
         inventory_files: /api/v2/projects/9/inventories/
+        last_job: /api/v2/project_updates/982/
+        last_update: /api/v2/project_updates/982/
         modified_by: /api/v2/users/1/
         notification_templates_error: /api/v2/projects/9/notification_templates_error/
         notification_templates_started: /api/v2/projects/9/notification_templates_started/
@@ -137,6 +139,19 @@
             id: 1
             last_name: ''
             username: admin
+        last_job:
+            description: ''
+            failed: false
+            finished: '2026-05-17T23:31:55.800358Z'
+            id: 982
+            name: Sat-coll
+            status: successful
+        last_update:
+            description: ''
+            failed: false
+            id: 982
+            name: Sat-coll
+            status: successful
         modified_by:
             first_name: ''
             id: 1
@@ -180,9 +195,9 @@
     description: ''
     id: 11
     last_job_failed: false
-    last_job_run: '2024-08-25T02:37:57.016821Z'
+    last_job_run: '2026-05-17T23:15:41.102020Z'
     last_update_failed: false
-    last_updated: '2024-08-25T02:37:57.016821Z'
+    last_updated: '2026-05-17T23:15:41.102020Z'
     local_path: _11__win_mssqlserver
     modified: '2023-11-23T03:54:21.636946Z'
     name: win_mssqlserver
@@ -194,6 +209,8 @@
         copy: /api/v2/projects/11/copy/
         created_by: /api/v2/users/1/
         inventory_files: /api/v2/projects/11/inventories/
+        last_job: /api/v2/project_updates/977/
+        last_update: /api/v2/project_updates/977/
         modified_by: /api/v2/users/1/
         notification_templates_error: /api/v2/projects/11/notification_templates_error/
         notification_templates_started: /api/v2/projects/11/notification_templates_started/
@@ -224,6 +241,19 @@
             id: 1
             last_name: ''
             username: admin
+        last_job:
+            description: ''
+            failed: false
+            finished: '2026-05-17T23:15:41.102020Z'
+            id: 977
+            name: win_mssqlserver
+            status: successful
+        last_update:
+            description: ''
+            failed: false
+            id: 977
+            name: win_mssqlserver
+            status: successful
         modified_by:
             first_name: ''
             id: 1
@@ -456,9 +486,9 @@
     description: ''
     id: 24
     last_job_failed: false
-    last_job_run: '2026-05-16T21:50:48.879767Z'
+    last_job_run: '2026-05-18T14:40:47.261454Z'
     last_update_failed: false
-    last_updated: '2026-05-16T21:50:48.879767Z'
+    last_updated: '2026-05-18T14:40:47.261454Z'
     local_path: _24__aap_iac
     modified: '2026-05-08T13:53:02.861733Z'
     name: aap-iac
@@ -470,8 +500,8 @@
         copy: /api/v2/projects/24/copy/
         created_by: /api/v2/users/1/
         inventory_files: /api/v2/projects/24/inventories/
-        last_job: /api/v2/project_updates/946/
-        last_update: /api/v2/project_updates/946/
+        last_job: /api/v2/project_updates/1019/
+        last_update: /api/v2/project_updates/1019/
         modified_by: /api/v2/users/1/
         notification_templates_error: /api/v2/projects/24/notification_templates_error/
         notification_templates_started: /api/v2/projects/24/notification_templates_started/
@@ -488,7 +518,7 @@
     scm_clean: false
     scm_delete_on_update: false
     scm_refspec: ''
-    scm_revision: 0839ab859dbdafc3eac88407ecc68ef22be9ba62
+    scm_revision: a156af6850bebabe39c8edc609c24f1ed0f07c67
     scm_track_submodules: false
     scm_type: git
     scm_update_cache_timeout: 0
@@ -505,14 +535,14 @@
         last_job:
             description: ''
             failed: false
-            finished: '2026-05-16T21:50:48.879767Z'
-            id: 946
+            finished: '2026-05-18T14:40:47.261454Z'
+            id: 1019
             name: aap-iac
             status: successful
         last_update:
             description: ''
             failed: false
-            id: 946
+            id: 1019
             name: aap-iac
             status: successful
         modified_by:
