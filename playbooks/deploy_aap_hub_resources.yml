@@ -63,7 +63,7 @@
       register: namespace_deploy
       ignore_errors: true
 
-# ---------------------------------------------------------
+    #---------------------------------------------------------
     # 2. EXECUTION ENVIRONMENT REPOSITORIES
     # ---------------------------------------------------------
     - name: Load Execution Environment definitions
