@@ -198,6 +198,20 @@
       ignore_errors: true
 
     # ---------------------------------------------------------
+    # EXECUTION ENVIRONMENTS (Controller)
+    # ---------------------------------------------------------
+    - name: Create or update Controller Execution Environments
+      ansible.controller.execution_environment:
+        controller_host: "{{ aap_host }}"
+        controller_oauthtoken: "{{ my_aap_token }}"
+        validate_certs: "{{ validate_certs_flag }}"
+        state: present
+        name: "Private Hub EE Supported"
+        image: "rhel92.ofam.dev/ee-supported-rhel8:latest"
+        pull: "missing"
+      ignore_errors: true
+
+    # ---------------------------------------------------------
     # JOB TEMPLATES (Controller Execution - ansible.controller)
     # ---------------------------------------------------------
     - name: Load job template definitions
