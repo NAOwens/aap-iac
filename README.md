@@ -89,4 +89,7 @@ When performing a full environment sync or migration, execute the playbooks in t
 ## Known Architectural Quirks Managed by this Codebase
 * **Gateway Token Routing:** AAP 2.6 collapses services behind a single Gateway proxy. These playbooks handle the required transition from standard Hub `Token` headers to Gateway `Bearer` headers.
 * **Empty Variables:** Replaces empty strings or `---` YAML markers with `omit` to prevent 400 Bad Request errors.
-* **Inventory Linking:** Prevents ambiguous duplicate inventory lookup failures by defaulting missing inventories to force a prompt-on-launch.  Satellite source inventory did not pull host filter; had to add it manually 
+* **Inventory Linking:** Prevents ambiguous duplicate inventory lookup failures by defaulting missing inventories to force a prompt-on-launch. 
+
+## Manual steps needed on the new AAP server after running deploy
+1. Had to manually add my host filter and Source variables to Satellite Inventory source in order to get it to sync the inventory.
