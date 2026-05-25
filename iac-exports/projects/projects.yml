@@ -486,9 +486,9 @@
     description: ''
     id: 24
     last_job_failed: false
-    last_job_run: '2026-05-18T21:06:23.612782Z'
+    last_job_run: '2026-05-25T21:02:06.139236Z'
     last_update_failed: false
-    last_updated: '2026-05-18T21:06:23.612782Z'
+    last_updated: '2026-05-25T21:02:06.139236Z'
     local_path: _24__aap_iac
     modified: '2026-05-08T13:53:02.861733Z'
     name: aap-iac
@@ -500,8 +500,8 @@
         copy: /api/v2/projects/24/copy/
         created_by: /api/v2/users/1/
         inventory_files: /api/v2/projects/24/inventories/
-        last_job: /api/v2/project_updates/1080/
-        last_update: /api/v2/project_updates/1080/
+        last_job: /api/v2/project_updates/1088/
+        last_update: /api/v2/project_updates/1088/
         modified_by: /api/v2/users/1/
         notification_templates_error: /api/v2/projects/24/notification_templates_error/
         notification_templates_started: /api/v2/projects/24/notification_templates_started/
@@ -518,7 +518,7 @@
     scm_clean: false
     scm_delete_on_update: false
     scm_refspec: ''
-    scm_revision: e96d876519f79d06fa48aa6bd9f1261d44815e34
+    scm_revision: 8cffe248ea34b2f365e488b640dc207571e1ab67
     scm_track_submodules: false
     scm_type: git
     scm_update_cache_timeout: 0
@@ -535,14 +535,14 @@
         last_job:
             description: ''
             failed: false
-            finished: '2026-05-18T21:06:23.612782Z'
-            id: 1080
+            finished: '2026-05-25T21:02:06.139236Z'
+            id: 1088
             name: aap-iac
             status: successful
         last_update:
             description: ''
             failed: false
-            id: 1080
+            id: 1088
             name: aap-iac
             status: successful
         modified_by:
