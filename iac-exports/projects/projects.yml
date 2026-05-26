@@ -486,9 +486,9 @@
     description: ''
     id: 24
     last_job_failed: false
-    last_job_run: '2026-05-25T21:02:06.139236Z'
+    last_job_run: '2026-05-26T14:43:23.527549Z'
     last_update_failed: false
-    last_updated: '2026-05-25T21:02:06.139236Z'
+    last_updated: '2026-05-26T14:43:23.527549Z'
     local_path: _24__aap_iac
     modified: '2026-05-08T13:53:02.861733Z'
     name: aap-iac
@@ -500,8 +500,8 @@
         copy: /api/v2/projects/24/copy/
         created_by: /api/v2/users/1/
         inventory_files: /api/v2/projects/24/inventories/
-        last_job: /api/v2/project_updates/1088/
-        last_update: /api/v2/project_updates/1088/
+        last_job: /api/v2/project_updates/1096/
+        last_update: /api/v2/project_updates/1096/
         modified_by: /api/v2/users/1/
         notification_templates_error: /api/v2/projects/24/notification_templates_error/
         notification_templates_started: /api/v2/projects/24/notification_templates_started/
@@ -518,7 +518,7 @@
     scm_clean: false
     scm_delete_on_update: false
     scm_refspec: ''
-    scm_revision: 8cffe248ea34b2f365e488b640dc207571e1ab67
+    scm_revision: e5ae04713ab7867dceca5beaa9016963007e74df
     scm_track_submodules: false
     scm_type: git
     scm_update_cache_timeout: 0
@@ -535,14 +535,14 @@
         last_job:
             description: ''
             failed: false
-            finished: '2026-05-25T21:02:06.139236Z'
-            id: 1088
+            finished: '2026-05-26T14:43:23.527549Z'
+            id: 1096
             name: aap-iac
             status: successful
         last_update:
             description: ''
             failed: false
-            id: 1088
+            id: 1096
             name: aap-iac
             status: successful
         modified_by:
@@ -688,3 +688,105 @@
     timeout: 0
     type: project
     url: /api/v2/projects/29/
+-   allow_override: false
+    created: '2026-05-26T14:21:35.323341Z'
+    credential: null
+    custom_virtualenv: null
+    default_environment: null
+    description: ''
+    id: 31
+    last_job_failed: false
+    last_job_run: '2026-05-26T14:21:40.472537Z'
+    last_update_failed: false
+    last_updated: '2026-05-26T14:21:40.472537Z'
+    local_path: _31__ocpv_iac
+    modified: '2026-05-26T14:21:35.323349Z'
+    name: ocpv-iac
+    next_job_run: null
+    organization: Ofam
+    related:
+        access_list: /api/v2/projects/31/access_list/
+        activity_stream: /api/v2/projects/31/activity_stream/
+        copy: /api/v2/projects/31/copy/
+        created_by: /api/v2/users/1/
+        inventory_files: /api/v2/projects/31/inventories/
+        last_job: /api/v2/project_updates/1094/
+        last_update: /api/v2/project_updates/1094/
+        modified_by: /api/v2/users/1/
+        notification_templates_error: /api/v2/projects/31/notification_templates_error/
+        notification_templates_started: /api/v2/projects/31/notification_templates_started/
+        notification_templates_success: /api/v2/projects/31/notification_templates_success/
+        object_roles: /api/v2/projects/31/object_roles/
+        organization: /api/v2/organizations/2/
+        playbooks: /api/v2/projects/31/playbooks/
+        project_updates: /api/v2/projects/31/project_updates/
+        schedules: /api/v2/projects/31/schedules/
+        scm_inventory_sources: /api/v2/projects/31/scm_inventory_sources/
+        teams: /api/v2/projects/31/teams/
+        update: /api/v2/projects/31/update/
+    scm_branch: ''
+    scm_clean: false
+    scm_delete_on_update: false
+    scm_refspec: ''
+    scm_revision: 51c8741e538c1ff5c369bb9803d7ff00d8d75891
+    scm_track_submodules: false
+    scm_type: git
+    scm_update_cache_timeout: 0
+    scm_update_on_launch: true
+    scm_url: https://github.com/NAOwens/ocpv-iac.git
+    signature_validation_credential: null
+    status: successful
+    summary_fields:
+        created_by:
+            first_name: ''
+            id: 1
+            last_name: ''
+            username: admin
+        last_job:
+            description: ''
+            failed: false
+            finished: '2026-05-26T14:21:40.472537Z'
+            id: 1094
+            name: ocpv-iac
+            status: successful
+        last_update:
+            description: ''
+            failed: false
+            id: 1094
+            name: ocpv-iac
+            status: successful
+        modified_by:
+            first_name: ''
+            id: 1
+            last_name: ''
+            username: admin
+        object_roles:
+            admin_role:
+                description: Can manage all aspects of the project
+                id: 207
+                name: Admin
+            read_role:
+                description: May view settings for the project
+                id: 210
+                name: Read
+            update_role:
+                description: May update the project
+                id: 209
+                name: Update
+            use_role:
+                description: Can use the project in a job template
+                id: 208
+                name: Use
+        organization:
+            description: ''
+            id: 2
+            name: Ofam
+        user_capabilities:
+            copy: true
+            delete: true
+            edit: true
+            schedule: true
+            start: true
+    timeout: 0
+    type: project
+    url: /api/v2/projects/31/

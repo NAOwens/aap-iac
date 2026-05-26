@@ -560,7 +560,7 @@
     job_tags: ''
     job_type: run
     last_job_failed: false
-    last_job_run: '2026-05-18T21:07:49.563648Z'
+    last_job_run: '2026-05-25T21:03:24.842699Z'
     limit: ''
     modified: '2026-05-16T17:26:31.302679Z'
     name: deploy_aap_resources
@@ -579,7 +579,7 @@
         inventory: /api/v2/inventories/2/
         jobs: /api/v2/job_templates/26/jobs/
         labels: /api/v2/job_templates/26/labels/
-        last_job: /api/v2/jobs/1081/
+        last_job: /api/v2/jobs/1089/
         launch: /api/v2/job_templates/26/launch/
         modified_by: /api/v2/users/1/
         notification_templates_error: /api/v2/job_templates/26/notification_templates_error/
@@ -633,14 +633,14 @@
         last_job:
             description: ''
             failed: false
-            finished: '2026-05-18T21:07:49.563648Z'
-            id: 1081
+            finished: '2026-05-25T21:03:24.842699Z'
+            id: 1089
             name: deploy_aap_resources
             status: successful
         last_update:
             description: ''
             failed: false
-            id: 1081
+            id: 1089
             name: deploy_aap_resources
             status: successful
         modified_by:
@@ -673,6 +673,11 @@
             scm_type: git
             status: successful
         recent_jobs:
+        -   canceled_on: null
+            finished: '2026-05-25T21:03:24.842699Z'
+            id: 1089
+            status: successful
+            type: job
         -   canceled_on: null
             finished: '2026-05-18T21:07:49.563648Z'
             id: 1081
@@ -716,11 +721,6 @@
         -   canceled_on: null
             finished: '2026-05-16T22:21:34.901546Z'
             id: 951
-            status: successful
-            type: job
-        -   canceled_on: null
-            finished: '2026-05-16T22:18:41.188974Z'
-            id: 949
             status: successful
             type: job
         user_capabilities:
@@ -1104,6 +1104,156 @@
     ask_variables_on_launch: false
     ask_verbosity_on_launch: false
     become_enabled: false
+    created: '2026-05-26T14:24:43.859728Z'
+    custom_virtualenv: null
+    description: ''
+    diff_mode: false
+    execution_environment: Default execution environment
+    extra_vars: '---'
+    force_handlers: false
+    forks: 0
+    host_config_key: ''
+    id: 32
+    inventory: Satellite Ofam
+    job_slice_count: 1
+    job_tags: ''
+    job_type: run
+    last_job_failed: false
+    last_job_run: null
+    limit: ''
+    modified: '2026-05-26T14:42:31.539710Z'
+    name: provision_rhel_vm_ocpv
+    next_job_run: null
+    organization: Ofam
+    playbook: playbooks/provision_rhel_vm_full.yml
+    prevent_instance_group_fallback: false
+    project: ocpv-iac
+    related:
+        access_list: /api/v2/job_templates/32/access_list/
+        activity_stream: /api/v2/job_templates/32/activity_stream/
+        copy: /api/v2/job_templates/32/copy/
+        created_by: /api/v2/users/1/
+        credentials: /api/v2/job_templates/32/credentials/
+        execution_environment: /api/v2/execution_environments/2/
+        instance_groups: /api/v2/job_templates/32/instance_groups/
+        inventory: /api/v2/inventories/2/
+        jobs: /api/v2/job_templates/32/jobs/
+        labels: /api/v2/job_templates/32/labels/
+        launch: /api/v2/job_templates/32/launch/
+        modified_by: /api/v2/users/1/
+        notification_templates_error: /api/v2/job_templates/32/notification_templates_error/
+        notification_templates_started: /api/v2/job_templates/32/notification_templates_started/
+        notification_templates_success: /api/v2/job_templates/32/notification_templates_success/
+        object_roles: /api/v2/job_templates/32/object_roles/
+        organization: /api/v2/organizations/2/
+        project: /api/v2/projects/31/
+        schedules: /api/v2/job_templates/32/schedules/
+        slice_workflow_jobs: /api/v2/job_templates/32/slice_workflow_jobs/
+        survey_spec: /api/v2/job_templates/32/survey_spec/
+        webhook_key: /api/v2/job_templates/32/webhook_key/
+        webhook_receiver: ''
+    scm_branch: ''
+    skip_tags: ''
+    start_at_task: ''
+    status: never updated
+    summary_fields:
+        created_by:
+            first_name: ''
+            id: 1
+            last_name: ''
+            username: admin
+        credentials:
+        -   cloud: false
+            description: ''
+            id: 11
+            kind: vault
+            name: ansible_vault
+        execution_environment:
+            description: ''
+            id: 2
+            image: registry.redhat.io/ansible-automation-platform-24/ee-supported-rhel8:latest
+            name: Default execution environment
+        inventory:
+            description: ''
+            has_active_failures: true
+            has_inventory_sources: true
+            hosts_with_active_failures: 1
+            id: 2
+            inventory_sources_with_failures: 0
+            kind: ''
+            name: Satellite Ofam
+            organization_id: 2
+            total_groups: 8
+            total_hosts: 8
+            total_inventory_sources: 1
+        labels:
+            count: 0
+            results: []
+        modified_by:
+            first_name: ''
+            id: 1
+            last_name: ''
+            username: admin
+        object_roles:
+            admin_role:
+                description: Can manage all aspects of the job template
+                id: 211
+                name: Admin
+            execute_role:
+                description: May run the job template
+                id: 212
+                name: Execute
+            read_role:
+                description: May view settings for the job template
+                id: 213
+                name: Read
+        organization:
+            description: ''
+            id: 2
+            name: Ofam
+        project:
+            allow_override: false
+            description: ''
+            id: 31
+            name: ocpv-iac
+            scm_type: git
+            status: successful
+        recent_jobs: []
+        survey:
+            description: ''
+            title: ''
+        user_capabilities:
+            copy: true
+            delete: true
+            edit: true
+            schedule: true
+            start: true
+    survey_enabled: false
+    timeout: 0
+    type: job_template
+    url: /api/v2/job_templates/32/
+    use_fact_cache: false
+    verbosity: 0
+    webhook_credential: null
+    webhook_service: ''
+-   allow_simultaneous: false
+    ask_credential_on_launch: false
+    ask_diff_mode_on_launch: false
+    ask_execution_environment_on_launch: false
+    ask_forks_on_launch: false
+    ask_instance_groups_on_launch: false
+    ask_inventory_on_launch: false
+    ask_job_slice_count_on_launch: false
+    ask_job_type_on_launch: false
+    ask_labels_on_launch: false
+    ask_limit_on_launch: false
+    ask_scm_branch_on_launch: false
+    ask_skip_tags_on_launch: false
+    ask_tags_on_launch: false
+    ask_timeout_on_launch: false
+    ask_variables_on_launch: false
+    ask_verbosity_on_launch: false
+    become_enabled: false
     created: '2026-05-17T22:34:45.746870Z'
     custom_virtualenv: null
     description: ''
@@ -1332,7 +1482,7 @@
     job_tags: ''
     job_type: run
     last_job_failed: false
-    last_job_run: '2026-05-18T21:06:36.775753Z'
+    last_job_run: '2026-05-25T21:02:27.831685Z'
     limit: ''
     modified: '2026-05-09T02:41:18.568687Z'
     name: pull_aap_resources
@@ -1347,12 +1497,12 @@
         copy: /api/v2/job_templates/25/copy/
         created_by: /api/v2/users/1/
         credentials: /api/v2/job_templates/25/credentials/
-        current_job: /api/v2/jobs/1087/
+        current_job: /api/v2/jobs/1095/
         instance_groups: /api/v2/job_templates/25/instance_groups/
         inventory: /api/v2/inventories/2/
         jobs: /api/v2/job_templates/25/jobs/
         labels: /api/v2/job_templates/25/labels/
-        last_job: /api/v2/jobs/1079/
+        last_job: /api/v2/jobs/1087/
         launch: /api/v2/job_templates/25/launch/
         modified_by: /api/v2/users/1/
         notification_templates_error: /api/v2/job_templates/25/notification_templates_error/
@@ -1390,13 +1540,13 @@
         current_job:
             description: ''
             failed: false
-            id: 1087
+            id: 1095
             name: pull_aap_resources
             status: running
         current_update:
             description: ''
             failed: false
-            id: 1087
+            id: 1095
             name: pull_aap_resources
             status: running
         inventory:
@@ -1418,14 +1568,14 @@
         last_job:
             description: ''
             failed: false
-            finished: '2026-05-18T21:06:36.775753Z'
-            id: 1079
+            finished: '2026-05-25T21:02:27.831685Z'
+            id: 1087
             name: pull_aap_resources
             status: successful
         last_update:
             description: ''
             failed: false
-            id: 1079
+            id: 1087
             name: pull_aap_resources
             status: successful
         modified_by:
@@ -1460,8 +1610,13 @@
         recent_jobs:
         -   canceled_on: null
             finished: null
-            id: 1087
+            id: 1095
             status: running
+            type: job
+        -   canceled_on: null
+            finished: '2026-05-25T21:02:27.831685Z'
+            id: 1087
+            status: successful
             type: job
         -   canceled_on: null
             finished: '2026-05-18T21:06:36.775753Z'
@@ -1501,11 +1656,6 @@
         -   canceled_on: null
             finished: '2026-05-09T03:55:48.578637Z'
             id: 895
-            status: successful
-            type: job
-        -   canceled_on: null
-            finished: '2026-05-09T03:51:55.681921Z'
-            id: 893
             status: successful
             type: job
         user_capabilities:
