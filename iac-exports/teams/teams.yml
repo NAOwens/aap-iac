@@ -1,0 +1,126 @@
+-   created: '2024-08-11T01:04:57.850548Z'
+    description: ''
+    id: 4
+    modified: '2024-08-11T01:04:57.850557Z'
+    name: LDAP Admins
+    organization: 2
+    related:
+        access_list: /api/v2/teams/4/access_list/
+        activity_stream: /api/v2/teams/4/activity_stream/
+        credentials: /api/v2/teams/4/credentials/
+        object_roles: /api/v2/teams/4/object_roles/
+        organization: /api/v2/organizations/2/
+        projects: /api/v2/teams/4/projects/
+        roles: /api/v2/teams/4/roles/
+        users: /api/v2/teams/4/users/
+    summary_fields:
+        object_roles:
+            admin_role:
+                description: Can manage all aspects of the team
+                id: 162
+                name: Admin
+            member_role:
+                description: User is a member of the team
+                id: 163
+                name: Member
+            read_role:
+                description: May view settings for the team
+                id: 164
+                name: Read
+        organization:
+            description: ''
+            id: 2
+            name: Ofam
+        user_capabilities:
+            delete: true
+            edit: true
+    type: team
+    url: /api/v2/teams/4/
+-   created: '2024-08-11T01:04:57.811004Z'
+    description: ''
+    id: 3
+    modified: '2024-08-11T01:04:57.811014Z'
+    name: LDAP Users
+    organization: 2
+    related:
+        access_list: /api/v2/teams/3/access_list/
+        activity_stream: /api/v2/teams/3/activity_stream/
+        credentials: /api/v2/teams/3/credentials/
+        object_roles: /api/v2/teams/3/object_roles/
+        organization: /api/v2/organizations/2/
+        projects: /api/v2/teams/3/projects/
+        roles: /api/v2/teams/3/roles/
+        users: /api/v2/teams/3/users/
+    summary_fields:
+        object_roles:
+            admin_role:
+                description: Can manage all aspects of the team
+                id: 159
+                name: Admin
+            member_role:
+                description: User is a member of the team
+                id: 160
+                name: Member
+            read_role:
+                description: May view settings for the team
+                id: 161
+                name: Read
+        organization:
+            description: ''
+            id: 2
+            name: Ofam
+        user_capabilities:
+            delete: true
+            edit: true
+    type: team
+    url: /api/v2/teams/3/
+-   created: '2024-07-25T16:44:19.922312Z'
+    description: ''
+    id: 2
+    modified: '2024-07-25T16:44:19.922316Z'
+    name: Satellite Team
+    organization: 2
+    related:
+        access_list: /api/v2/teams/2/access_list/
+        activity_stream: /api/v2/teams/2/activity_stream/
+        created_by: /api/v2/users/1/
+        credentials: /api/v2/teams/2/credentials/
+        modified_by: /api/v2/users/1/
+        object_roles: /api/v2/teams/2/object_roles/
+        organization: /api/v2/organizations/2/
+        projects: /api/v2/teams/2/projects/
+        roles: /api/v2/teams/2/roles/
+        users: /api/v2/teams/2/users/
+    summary_fields:
+        created_by:
+            first_name: ''
+            id: 1
+            last_name: ''
+            username: admin
+        modified_by:
+            first_name: ''
+            id: 1
+            last_name: ''
+            username: admin
+        object_roles:
+            admin_role:
+                description: Can manage all aspects of the team
+                id: 135
+                name: Admin
+            member_role:
+                description: User is a member of the team
+                id: 136
+                name: Member
+            read_role:
+                description: May view settings for the team
+                id: 137
+                name: Read
+        organization:
+            description: ''
+            id: 2
+            name: Ofam
+        user_capabilities:
+            delete: true
+            edit: true
+    type: team
+    url: /api/v2/teams/2/

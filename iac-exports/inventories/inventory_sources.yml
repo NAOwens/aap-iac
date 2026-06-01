@@ -1,0 +1,114 @@
+-   created: '2023-10-31T22:18:24.539956Z'
+    credential: Satellite Cred
+    custom_virtualenv: null
+    description: ''
+    enabled_value: ''
+    enabled_var: ''
+    execution_environment: null
+    host_filter: ^(?!virt-who-*)
+    id: 8
+    inventory: Satellite Ofam
+    last_job_failed: false
+    last_job_run: '2026-03-19T15:08:18.405212Z'
+    last_update_failed: false
+    last_updated: '2026-03-19T15:08:18.405212Z'
+    limit: ''
+    modified: '2024-07-16T15:28:30.022878Z'
+    name: Satellite
+    next_job_run: null
+    overwrite: true
+    overwrite_vars: false
+    related:
+        activity_stream: /api/v2/inventory_sources/8/activity_stream/
+        created_by: /api/v2/users/1/
+        credential: /api/v2/credentials/5/
+        groups: /api/v2/inventory_sources/8/groups/
+        hosts: /api/v2/inventory_sources/8/hosts/
+        inventory: /api/v2/inventories/2/
+        inventory_updates: /api/v2/inventory_sources/8/inventory_updates/
+        last_job: /api/v2/inventory_updates/779/
+        last_update: /api/v2/inventory_updates/779/
+        modified_by: /api/v2/users/1/
+        notification_templates_error: /api/v2/inventory_sources/8/notification_templates_error/
+        notification_templates_started: /api/v2/inventory_sources/8/notification_templates_started/
+        notification_templates_success: /api/v2/inventory_sources/8/notification_templates_success/
+        schedules: /api/v2/inventory_sources/8/schedules/
+        update: /api/v2/inventory_sources/8/update/
+    scm_branch: ''
+    source: satellite6
+    source_path: ''
+    source_project: null
+    source_vars: "---\ngroup_prefix: foreman_\nkeyed_groups:\n- key: foreman_hostcollection
+        | lower | regex_replace(' ', '') | regex_replace('[^A-Za-z0-9_]', '_') | regex_replace('none',
+        '')\n  prefix: hostcollection_\n  separator: ''\nsatellite6_want_hostcollections:
+        True\nlegacy_hostvars: true\nplugin: theforeman.foreman.foreman\nvalidate_certs:
+        false\nwant_facts: true\nwant_hostcollections: true\nwant_params: true"
+    status: successful
+    summary_fields:
+        created_by:
+            first_name: ''
+            id: 1
+            last_name: ''
+            username: admin
+        credential:
+            cloud: true
+            credential_type_id: 8
+            description: ''
+            id: 5
+            kind: satellite6
+            name: Satellite Cred
+        credentials:
+        -   cloud: true
+            credential_type_id: 8
+            description: ''
+            id: 5
+            kind: satellite6
+            name: Satellite Cred
+        inventory:
+            description: ''
+            has_active_failures: true
+            has_inventory_sources: true
+            hosts_with_active_failures: 1
+            id: 2
+            inventory_sources_with_failures: 0
+            kind: ''
+            name: Satellite Ofam
+            organization_id: 2
+            total_groups: 8
+            total_hosts: 8
+            total_inventory_sources: 1
+        last_job:
+            description: ''
+            failed: false
+            finished: '2026-03-19T15:08:18.405212Z'
+            id: 779
+            license_error: false
+            name: Satellite Ofam - Satellite
+            status: successful
+        last_update:
+            description: ''
+            failed: false
+            id: 779
+            license_error: false
+            name: Satellite Ofam - Satellite
+            status: successful
+        modified_by:
+            first_name: ''
+            id: 1
+            last_name: ''
+            username: admin
+        organization:
+            description: ''
+            id: 2
+            name: Ofam
+        user_capabilities:
+            delete: true
+            edit: true
+            schedule: true
+            start: true
+    timeout: 0
+    type: inventory_source
+    update_cache_timeout: 0
+    update_on_launch: false
+    url: /api/v2/inventory_sources/8/
+    verbosity: 1
