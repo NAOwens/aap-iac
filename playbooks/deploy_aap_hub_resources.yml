@@ -1,5 +1,5 @@
 ---
-- name: Deploy AAP Hub Resources from Infrastructure as Code
+- name: Deploy AAP Hub Resources from Infrastructure as Code.
   hosts: localhost
   connection: local
   gather_facts: false
