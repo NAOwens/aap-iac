@@ -1,5 +1,5 @@
 ---
-- name: Pull AAP Hub Resources and Store as Infrastructure as Code
+- name: Pull AAP Hub Resources and Store as Infrastructure as Code.
   hosts: localhost
   connection: local
   gather_facts: true
