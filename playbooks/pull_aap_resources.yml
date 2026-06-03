@@ -8,7 +8,7 @@
     aap_controller_token: "{{ lookup ('env', 'CONTROLLER_OAUTH_TOKEN') }}"
     aap_controller_validate_certs: "{{ validate_certs | default(false) }}"
     playbook_dir: "NAOwens/aap-iac"
-    iac_output_dir: "./iac-exports"
+    iac_output_dir: "./iac-exports"  # overridden at runtime based on detected AAP version
     git_token_variable: "{{ github_token }}"
 
   collections:
@@ -16,6 +16,30 @@
     - ansible.controller
 
   pre_tasks:
+    - name: Check AAP Controller version
+      ansible.builtin.uri:
+        url: "{{ aap_controller_host }}/api/v2/ping/"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ aap_controller_token }}"
+        validate_certs: "{{ aap_controller_validate_certs }}"
+        return_content: true
+      register: aap_ping_result
+
+    # Controller 4.Y corresponds to AAP 2.Y (e.g. 4.6.x → AAP 2.6)
+    - name: Set output directory based on detected AAP version
+      ansible.builtin.set_fact:
+        aap_controller_version: "{{ aap_ping_result.json.version }}"
+        iac_output_dir: >-
+          {{ './iac-26up-exports' if (aap_ping_result.json.version.split('.')[1] | int) >= 6 else './iac-exports' }}
+
+    - name: Display detected AAP version and export directory
+      ansible.builtin.debug:
+        msg: >-
+          Controller version {{ aap_ping_result.json.version }} detected
+          (AAP {{ '2.6+' if (aap_ping_result.json.version.split('.')[1] | int) >= 6 else '2.5 or below' }}).
+          Exporting to: {{ iac_output_dir }}
+
     - name: Validate required environment variables
       ansible.builtin.assert:
         that:
@@ -293,8 +317,8 @@
 
     - name: Copy exported files to the git repository
       ansible.builtin.copy:
-        src: ./iac-exports/
-        dest: /tmp/cac_repo/iac-exports/
+        src: "{{ iac_output_dir }}/"
+        dest: "/tmp/cac_repo/{{ iac_output_dir | basename }}/"
         remote_src: true
 
     - name: Add, commit, and push exported files to Git
