@@ -2,12 +2,11 @@
 - name: Pull AAP Resources and Store as Infrastructure as Code
   hosts: localhost
   connection: local
-  gather_facts: true
+  gather_facts: false
   vars:
     aap_controller_host: "{{ lookup('env', 'CONTROLLER_HOST') }}"
-    aap_controller_token: "{{ lookup ('env', 'CONTROLLER_OAUTH_TOKEN') }}"
+    aap_controller_token: "{{ lookup('env', 'CONTROLLER_OAUTH_TOKEN') }}"
     aap_controller_validate_certs: "{{ validate_certs | default(false) }}"
-    playbook_dir: "NAOwens/aap-iac"
     iac_output_dir: "./iac-exports"
     git_token_variable: "{{ github_token }}"
 
@@ -16,11 +15,13 @@
     - ansible.controller
 
   pre_tasks:
-    - name: Validate required environment variables
+    - name: Validate required variables
       ansible.builtin.assert:
         that:
+          - aap_controller_host is defined and aap_controller_host != ''
           - aap_controller_token is defined and aap_controller_token != ''
-        fail_msg: "AAP_TOKEN environment variable must be set"
+          - git_token_variable is defined and git_token_variable != ''
+        fail_msg: "CONTROLLER_HOST and CONTROLLER_OAUTH_TOKEN env vars and github_token extra var must all be set"
 
     - name: Create output directory structure
       ansible.builtin.file:
@@ -35,261 +36,207 @@
         - "{{ iac_output_dir }}/credentials"
         - "{{ iac_output_dir }}/projects"
         - "{{ iac_output_dir }}/inventories"
+        - "{{ iac_output_dir }}/execution_environments"
         - "{{ iac_output_dir }}/job_templates"
         - "{{ iac_output_dir }}/workflows"
         - "{{ iac_output_dir }}/notification_templates"
 
   tasks:
-    # Organizations
+    # ---------------------------------------------------------
+    # ORGANIZATIONS
+    # ---------------------------------------------------------
     - name: Pull organizations from AAP Controller
-      set_fact:
+      ansible.builtin.set_fact:
         org_results: "{{ query('awx.awx.controller_api', 'organizations', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
-      ignore_errors: true
 
     - name: Export organizations to YAML
       ansible.builtin.copy:
         content: "{{ org_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/organizations/organizations.yml"
-      when: org_results is defined and org_results | length > 0
+      when: org_results | length > 0
 
-    # Users
+    # ---------------------------------------------------------
+    # USERS
+    # ---------------------------------------------------------
     - name: Pull users from AAP Controller
-      set_fact:
+      ansible.builtin.set_fact:
         user_results: "{{ query('awx.awx.controller_api', 'users', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
-      ignore_errors: true
 
     - name: Export users to YAML
       ansible.builtin.copy:
         content: "{{ user_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/users/users.yml"
-      when: user_results is defined and user_results | length > 0
+      when: user_results | length > 0
 
-    # Teams
+    # ---------------------------------------------------------
+    # TEAMS
+    # ---------------------------------------------------------
     - name: Pull teams from AAP Controller
-      set_fact:
+      ansible.builtin.set_fact:
         team_results: "{{ query('awx.awx.controller_api', 'teams', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
-      ignore_errors: true
 
     - name: Export teams to YAML
       ansible.builtin.copy:
         content: "{{ team_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/teams/teams.yml"
-      when: team_results is defined and team_results | length > 0
+      when: team_results | length > 0
 
-    # Credentials (without sensitive data)
-    - name: Pull credentials metadata from AAP Controller
-      set_fact:
+    # ---------------------------------------------------------
+    # CREDENTIALS (metadata only — no secrets exported)
+    # ---------------------------------------------------------
+    - name: Pull credentials from AAP Controller
+      ansible.builtin.set_fact:
         credentials_list: "{{ query('awx.awx.controller_api', 'credentials', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
-      ignore_errors: true
 
     - name: Export credential metadata to YAML
       ansible.builtin.copy:
         content: |
-          ---
-          # Credentials (sensitive data excluded)
-          # Re-create credentials with sensitive values in a secure manner
+          # Credentials — sensitive data excluded. Recreate secrets manually before running job templates.
           {{ credentials_list | to_nice_yaml }}
         dest: "{{ iac_output_dir }}/credentials/credentials_metadata.yml"
-      when: credentials_list is defined and credentials_list | length > 0
+      when: credentials_list | length > 0
 
-    # Projects
+    # ---------------------------------------------------------
+    # PROJECTS
+    # Raw data exported including summary_fields — names are
+    # read from summary_fields in the deploy playbook so no
+    # ID-to-name mapping is needed here.
+    # ---------------------------------------------------------
     - name: Pull projects from AAP Controller
-      set_fact:
-        project_results: "{{ query('awx.awx.controller_api', 'projects', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
-      ignore_errors: true
-
-    - name: Map Organization IDs to Names for Projects
       ansible.builtin.set_fact:
-        project_results: >-
-          [
-            {% for item in project_results %}
-              {{ item | combine({'organization': item.summary_fields.organization.name | default(item.organization)}) | to_json }}
-              {% if not loop.last %},{% endif %}
-            {% endfor %}
-          ]
-      when: project_results is defined and project_results | length > 0
+        project_results: "{{ query('awx.awx.controller_api', 'projects', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
 
     - name: Export projects to YAML
       ansible.builtin.copy:
         content: "{{ project_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/projects/projects.yml"
-      when: project_results is defined and project_results | length > 0
+      when: project_results | length > 0
 
-    # Inventories
+    # ---------------------------------------------------------
+    # INVENTORIES
+    # ---------------------------------------------------------
     - name: Pull inventories from AAP Controller
-      set_fact:
-        inventory_results: "{{ query('awx.awx.controller_api', 'inventories', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
-      ignore_errors: true
-
-    - name: Map relational IDs to names for Inventories
       ansible.builtin.set_fact:
-        inventory_results: >-
-          [
-            {% for item in inventory_results %}
-              {{ 
-                item | combine({
-                  'organization': item.summary_fields.organization.name | default(item.organization)
-                }) | to_json 
-              }}
-              {% if not loop.last %},{% endif %}
-            {% endfor %}
-          ]
-      when: inventory_results is defined and inventory_results | length > 0
+        inventory_results: "{{ query('awx.awx.controller_api', 'inventories', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
 
     - name: Export inventories to YAML
       ansible.builtin.copy:
         content: "{{ inventory_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/inventories/inventories.yml"
-      when: inventory_results is defined and inventory_results | length > 0
-      
-    # Inventory Sources
-    - name: Pull inventory sources from AAP Controller
-      set_fact:
-        inv_sources_results: "{{ query('awx.awx.controller_api', 'inventory_sources', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
-      ignore_errors: true
+      when: inventory_results | length > 0
 
-    - name: Map relational IDs to names for Inventory Sources
+    # ---------------------------------------------------------
+    # INVENTORY SOURCES
+    # ---------------------------------------------------------
+    - name: Pull inventory sources from AAP Controller
       ansible.builtin.set_fact:
-        inv_sources_results: >-
-          [
-            {% for item in inv_sources_results %}
-              {{ 
-                item | combine({
-                  'inventory': item.summary_fields.inventory.name | default(item.inventory),
-                  'credential': item.summary_fields.credential.name | default(item.credential)
-                }) | to_json 
-              }}
-              {% if not loop.last %},{% endif %}
-            {% endfor %}
-          ]
-      when: inv_sources_results is defined and inv_sources_results | length > 0
+        inv_sources_results: "{{ query('awx.awx.controller_api', 'inventory_sources', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
 
     - name: Export inventory sources to YAML
       ansible.builtin.copy:
         content: "{{ inv_sources_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/inventories/inventory_sources.yml"
-      when: inv_sources_results is defined and inv_sources_results | length > 0
+      when: inv_sources_results | length > 0
 
-    # Static Hosts
+    # ---------------------------------------------------------
+    # STATIC HOSTS
+    # ---------------------------------------------------------
     - name: Pull static hosts from AAP Controller
-      set_fact:
-        hosts_results: "{{ query('awx.awx.controller_api', 'hosts', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
-      ignore_errors: true
-
-    - name: Map relational IDs to names for Hosts
       ansible.builtin.set_fact:
-        hosts_results: >-
-          [
-            {% for item in hosts_results %}
-              {{ 
-                item | combine({
-                  'inventory': item.summary_fields.inventory.name | default(item.inventory)
-                }) | to_json 
-              }}
-              {% if not loop.last %},{% endif %}
-            {% endfor %}
-          ]
-      when: hosts_results is defined and hosts_results | length > 0
+        hosts_results: "{{ query('awx.awx.controller_api', 'hosts', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
 
     - name: Export hosts to YAML
       ansible.builtin.copy:
         content: "{{ hosts_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/inventories/hosts.yml"
-      when: hosts_results is defined and hosts_results | length > 0
-    
-    # Job Templates
-    - name: Pull job templates from AAP Controller
-      set_fact:
-        job_template_results: "{{ query('awx.awx.controller_api', 'job_templates', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
-      ignore_errors: true
+      when: hosts_results | length > 0
 
-    - name: Map relational IDs to names for Job Templates
+    # ---------------------------------------------------------
+    # EXECUTION ENVIRONMENTS
+    # ---------------------------------------------------------
+    - name: Pull execution environments from AAP Controller
       ansible.builtin.set_fact:
-        job_template_results: >-
-          [
-            {% for item in job_template_results %}
-              {{ 
-                item | combine({
-                  'organization': item.summary_fields.organization.name | default(item.organization),
-                  'project': item.summary_fields.project.name | default(item.project),
-                  'inventory': item.summary_fields.inventory.name | default(item.inventory),
-                  'execution_environment': item.summary_fields.execution_environment.name | default(item.execution_environment)
-                }) | to_json 
-              }}
-              {% if not loop.last %},{% endif %}
-            {% endfor %}
-          ]
-      when: job_template_results is defined and job_template_results | length > 0
+        ee_results: "{{ query('awx.awx.controller_api', 'execution_environments', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
+
+    - name: Export execution environments to YAML
+      ansible.builtin.copy:
+        content: "{{ ee_results | to_nice_yaml }}"
+        dest: "{{ iac_output_dir }}/execution_environments/execution_environments.yml"
+      when: ee_results | length > 0
+
+    # ---------------------------------------------------------
+    # JOB TEMPLATES
+    # ---------------------------------------------------------
+    - name: Pull job templates from AAP Controller
+      ansible.builtin.set_fact:
+        job_template_results: "{{ query('awx.awx.controller_api', 'job_templates', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
 
     - name: Export job templates to YAML
       ansible.builtin.copy:
         content: "{{ job_template_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/job_templates/job_templates.yml"
-      when: job_template_results is defined and job_template_results | length > 0
+      when: job_template_results | length > 0
 
-    # Workflows
+    # ---------------------------------------------------------
+    # WORKFLOW TEMPLATES
+    # ---------------------------------------------------------
     - name: Pull workflow templates from AAP Controller
-      set_fact:
+      ansible.builtin.set_fact:
         workflow_results: "{{ query('awx.awx.controller_api', 'workflow_job_templates', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
-      ignore_errors: true
 
     - name: Export workflow templates to YAML
       ansible.builtin.copy:
         content: "{{ workflow_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/workflows/workflows.yml"
-      when: workflow_results is defined and workflow_results | length > 0
+      when: workflow_results | length > 0
 
-    # Notification Templates
+    # ---------------------------------------------------------
+    # NOTIFICATION TEMPLATES
+    # ---------------------------------------------------------
     - name: Pull notification templates from AAP Controller
-      set_fact:
+      ansible.builtin.set_fact:
         notification_results: "{{ query('awx.awx.controller_api', 'notification_templates', host=aap_controller_host, oauth_token=aap_controller_token, verify_ssl=aap_controller_validate_certs) }}"
-      ignore_errors: true
 
     - name: Export notification templates to YAML
       ansible.builtin.copy:
         content: "{{ notification_results | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/notification_templates/notifications.yml"
-      when: notification_results is defined and notification_results | length > 0
+      when: notification_results | length > 0
 
   post_tasks:
     - name: Create summary report
       ansible.builtin.copy:
         content: |
           # AAP Resource Export Summary
-          Generated: {{ ansible_date_time.iso8601 }}
+          Generated: {{ now(utc=true, fmt='%Y-%m-%dT%H:%M:%SZ') }}
           Controller: {{ aap_controller_host }}
-          
-          ## Exported Resources
-          - Organizations: {{ org_results | length | default(0) }}
-          - Users: {{ user_results | length | default(0) }}
-          - Teams: {{ team_results | length | default(0) }}
-          - Credentials: {{ credentials_list | length | default(0) }}
-          - Projects: {{ project_results | length | default(0) }}
-          - Inventories: {{ inventory_results | length | default(0) }}
-          - Job Templates: {{ job_template_results | length | default(0) }}
-          - Workflow Templates: {{ workflow_results | length | default(0) }}
-          - Notification Templates: {{ notification_results | length | default(0) }}
-          
-          ## Location
-          Export directory: {{ iac_output_dir }}
-          
-          ## Notes
-          - Sensitive credential data (passwords, API tokens) is not exported for security
-          - Credentials must be re-created with sensitive values in a secure manner
-          - Review and commit exported files to version control
-        dest: "{{ iac_output_dir }}/EXPORT_SUMMARY.md"
 
-    - name: Display export summary
-      ansible.builtin.debug:
-        msg: "AAP resources exported to {{ iac_output_dir }}"
+          ## Exported Resources
+          - Organizations: {{ org_results | length }}
+          - Users: {{ user_results | length }}
+          - Teams: {{ team_results | length }}
+          - Credentials: {{ credentials_list | length }}
+          - Projects: {{ project_results | length }}
+          - Inventories: {{ inventory_results | length }}
+          - Inventory Sources: {{ inv_sources_results | length }}
+          - Hosts: {{ hosts_results | length }}
+          - Execution Environments: {{ ee_results | length }}
+          - Job Templates: {{ job_template_results | length }}
+          - Workflow Templates: {{ workflow_results | length }}
+          - Notification Templates: {{ notification_results | length }}
+
+          ## Notes
+          - Sensitive credential data (passwords, API tokens) is not exported
+          - Credentials must be recreated with sensitive values before deploying job templates
+        dest: "{{ iac_output_dir }}/EXPORT_SUMMARY.md"
 
     - name: Clone the CaC repository
       ansible.builtin.git:
-        repo: 'https://{{ git_token_variable }}@github.com/NAOwens/aap-iac.git' 
+        repo: "https://{{ git_token_variable }}@github.com/NAOwens/aap-iac.git"
         dest: /tmp/cac_repo
         version: main
-        # This allows the module to accept the host key automatically
-        accept_hostkey: true 
+        accept_hostkey: true
+      no_log: true
 
     - name: Copy exported files to the git repository
       ansible.builtin.copy:
@@ -297,7 +244,14 @@
         dest: /tmp/cac_repo/iac-exports/
         remote_src: true
 
-    - name: Add, commit, and push exported files to Git
+    - name: Check for changed files
+      ansible.builtin.command: git status --porcelain
+      args:
+        chdir: /tmp/cac_repo
+      register: git_status
+      changed_when: false
+
+    - name: Commit and push exported files to GitHub
       ansible.builtin.shell: |
         git config user.email "owensna7@gmail.com"
         git config user.name "NAOwens"
@@ -308,8 +262,10 @@
       args:
         chdir: /tmp/cac_repo
       environment:
-        GIT_TERMINAL_PROMPT: "0"  # Forces Git to fail instead of hanging!
-      register: git_result
-      failed_when: 
-        - git_result.rc != 0
-        - "'nothing to commit' not in git_result.stdout"
+        GIT_TERMINAL_PROMPT: "0"
+      when: git_status.stdout | length > 0
+      no_log: true
+
+    - name: Display export summary
+      ansible.builtin.debug:
+        msg: "AAP resources exported to {{ iac_output_dir }} — {{ 'committed and pushed to GitHub' if git_status.stdout | length > 0 else 'no changes detected, nothing pushed' }}"

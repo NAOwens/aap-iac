@@ -1,17 +1,12 @@
 ---
-- name: Deploy AAP Hub Resources from Infrastructure as Code.
+- name: Deploy AAP Hub Resources from Infrastructure as Code
   hosts: localhost
   connection: local
   gather_facts: false
   vars:
-    # ---------------------------------------------------------
-    # POINTING AT THE GATEWAY WITH THE GATEWAY TOKEN
-    # ---------------------------------------------------------
     ah_host: "{{ new_aap_gateway_url }}"
     ah_token: "{{ my_aap_token }}"
     validate_certs_flag: "{{ validate_certs | default(false) }}"
-    
-    # GitHub Repository Settings
     git_repo_url: "https://github.com/NAOwens/aap-iac.git"
     git_clone_dest: "/tmp/aap-hub-iac"
     iac_source_dir: "{{ git_clone_dest }}/iac-hub-exports"
@@ -20,18 +15,18 @@
     - name: Validate required extra_vars
       ansible.builtin.assert:
         that:
-          - ah_host is defined and ah_host != ''
-          - ah_token is defined and ah_token != ''
-        fail_msg: "Both 'new_aap_gateway_url' and 'my_aap_token' extra_vars must be set!"
+          - new_aap_gateway_url is defined and new_aap_gateway_url != ''
+          - my_aap_token is defined and my_aap_token != ''
+        fail_msg: "new_aap_gateway_url and my_aap_token must be provided via Extra Vars"
 
     - name: Clone IaC Hub repository from GitHub
       ansible.builtin.git:
         repo: "{{ git_repo_url }}"
         dest: "{{ git_clone_dest }}"
-        version: "main"
+        version: main
         force: true
-        
-    - name: Check IaC Hub source directory exists in cloned repo
+
+    - name: Verify IaC Hub source directory exists
       ansible.builtin.stat:
         path: "{{ iac_source_dir }}"
       register: iac_dir
@@ -44,7 +39,6 @@
     - name: Load namespace definitions
       ansible.builtin.set_fact:
         namespaces: "{{ lookup('file', iac_source_dir ~ '/namespaces/namespaces.yml', errors='ignore') | default('[]', true) | from_yaml }}"
-      ignore_errors: true
 
     - name: Create or update Namespaces via API
       ansible.builtin.uri:
@@ -58,22 +52,25 @@
           company: "{{ item.company | default('') }}"
           description: "{{ item.description | default('') }}"
         validate_certs: "{{ validate_certs_flag }}"
-        status_code: [200, 201, 400, 409] # Accepts success or already exists
-      loop: "{{ namespaces | default([]) }}"
+        status_code: [200, 201, 409]
+      loop: "{{ namespaces }}"
+      loop_control:
+        label: "{{ item.name }}"
       register: namespace_deploy
-      ignore_errors: true
 
-    #---------------------------------------------------------
+    # ---------------------------------------------------------
     # 2. EXECUTION ENVIRONMENT REPOSITORIES
+    # Three steps: create the Pulp container repository, look up
+    # its href by name (building a name-keyed map to avoid fragile
+    # index alignment), then create the Galaxy distribution.
     # ---------------------------------------------------------
     - name: Load Execution Environment definitions
       ansible.builtin.set_fact:
         ee_repos: "{{ lookup('file', iac_source_dir ~ '/execution_environments/execution_environments.yml', errors='ignore') | default('[]', true) | from_yaml }}"
-      ignore_errors: true
 
     - name: Create EE Repository (Pulp API)
       ansible.builtin.uri:
-        url: "{{ ah_host }}/api/galaxy/pulp/api/v3/repositories/container/container/" # <-- Updated to standard container repo
+        url: "{{ ah_host }}/api/galaxy/pulp/api/v3/repositories/container/container/"
         method: POST
         headers:
           Authorization: "Bearer {{ ah_token }}"
@@ -82,21 +79,39 @@
           name: "{{ item.name }}"
           description: "{{ item.description | default('') }}"
         validate_certs: "{{ validate_certs_flag }}"
-        status_code: [201, 400, 409]
-      loop: "{{ ee_repos | default([]) }}"
+        status_code: [201, 409]
+      loop: "{{ ee_repos }}"
+      loop_control:
+        label: "{{ item.name }}"
       register: pulp_repo
-      ignore_errors: true
 
-    - name: Get EE Repository HREF
+    - name: Get EE Repository HREFs by name
       ansible.builtin.uri:
-        url: "{{ ah_host }}/api/galaxy/pulp/api/v3/repositories/container/container/?name={{ item.name | urlencode }}" # <-- Updated to standard container repo
+        url: "{{ ah_host }}/api/galaxy/pulp/api/v3/repositories/container/container/?name={{ item.name | urlencode }}"
         method: GET
         headers:
           Authorization: "Bearer {{ ah_token }}"
         validate_certs: "{{ validate_certs_flag }}"
-      loop: "{{ ee_repos | default([]) }}"
-      register: repo_get
-      ignore_errors: true
+      loop: "{{ ee_repos }}"
+      loop_control:
+        label: "{{ item.name }}"
+      register: repo_href_results
+
+    - name: Build EE HREF lookup map
+      # Builds {name: pulp_href} so the distribution step can look up
+      # HREFs by name rather than by loop index — avoids misalignment
+      # if any item produces a failed or skipped result.
+      ansible.builtin.set_fact:
+        ee_href_map: >-
+          {{
+            ee_href_map | default({}) | combine({
+              item.item.name: item.json.results[0].pulp_href | default('')
+            })
+          }}
+      loop: "{{ repo_href_results.results }}"
+      loop_control:
+        label: "{{ item.item.name }}"
+      when: item.json.results | default([]) | length > 0
 
     - name: Create EE Distribution (Pulp API)
       ansible.builtin.uri:
@@ -108,17 +123,17 @@
         body:
           name: "{{ item.name }}"
           base_path: "{{ item.name }}"
-          repository: "{{ repo_get.results[ansible_loop.index0].json.results[0].pulp_href }}"
+          repository: "{{ ee_href_map[item.name] }}"
         validate_certs: "{{ validate_certs_flag }}"
-        status_code: [201, 400, 409]
-      loop: "{{ ee_repos | default([]) }}"
+        status_code: [201, 409]
+      loop: "{{ ee_repos }}"
       loop_control:
-        extended: true
+        label: "{{ item.name }}"
       register: ee_deploy
-      ignore_errors: true
-      when: 
-        - repo_get.results[ansible_loop.index0].json.results is defined 
-        - repo_get.results[ansible_loop.index0].json.results | length > 0
+      when:
+        - ee_href_map is defined
+        - item.name in ee_href_map
+        - ee_href_map[item.name] != ''
 
     # ---------------------------------------------------------
     # 3. REMOTE REGISTRIES (Collection Remotes)
@@ -126,7 +141,6 @@
     - name: Load Remote Registry definitions
       ansible.builtin.set_fact:
         remotes: "{{ lookup('file', iac_source_dir ~ '/remotes/remotes.yml', errors='ignore') | default('[]', true) | from_yaml }}"
-      ignore_errors: true
 
     - name: Create or update Remote Registries via API
       ansible.builtin.uri:
@@ -138,7 +152,6 @@
         body:
           name: "{{ item.name }}"
           url: "{{ item.url }}"
-          # If empty or null, Ansible will strip these keys out of the JSON entirely
           requirements_file: "{{ item.requirements_file | default(omit, true) }}"
           auth_url: "{{ item.auth_url | default(omit, true) }}"
           ca_cert: "{{ item.ca_cert | default(omit, true) }}"
@@ -150,7 +163,24 @@
           tls_validation: "{{ omit if item.tls_validation is none else item.tls_validation }}"
           rate_limit: "{{ omit if item.rate_limit is none else item.rate_limit }}"
         validate_certs: "{{ validate_certs_flag }}"
-        status_code: [201, 400, 409] # Accepts 201 Created or 400/409 Already Exists
-      loop: "{{ remotes | default([]) }}"
+        status_code: [201, 409]
+      loop: "{{ remotes }}"
+      loop_control:
+        label: "{{ item.name }}"
       register: remote_deploy
-      ignore_errors: true
+
+  post_tasks:
+    - name: Display deployment summary
+      ansible.builtin.debug:
+        msg: |
+          AAP Hub Deployment Complete — {{ ah_host }}
+
+          Deployed (successful/total):
+            - Namespaces:             {{ namespace_deploy.results | rejectattr('failed') | list | length }}/{{ namespace_deploy.results | length }}
+            - EE Repositories:        {{ pulp_repo.results | rejectattr('failed') | list | length }}/{{ pulp_repo.results | length }}
+            - EE Distributions:       {{ ee_deploy.results | rejectattr('failed') | rejectattr('skipped') | list | length }}/{{ ee_repos | length }}
+            - Collection Remotes:     {{ remote_deploy.results | rejectattr('failed') | list | length }}/{{ remote_deploy.results | length }}
+
+          NOTE: EE container images must be pushed to Hub separately.
+          Deploy deploy_aap_resources.yml after this playbook to create
+          the matching Controller-side EE references.

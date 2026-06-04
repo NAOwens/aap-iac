@@ -4,18 +4,11 @@
   connection: local
   gather_facts: false
   vars:
-    # Gateway URL based on your successful curl test
     aap_host: "{{ new_aap_gateway_url }}"
-    
-    # Renamed variable to avoid built-in alias collisions
     my_auth_token: "{{ my_aap_token }}"
     validate_certs_flag: "{{ validate_certs | default(false) }}"
-    
-    # GitHub Repository Settings
     git_repo_url: "https://github.com/NAOwens/aap-iac.git"
     git_clone_dest: "/tmp/aap-iac"
-    
-    # Source directory pointing to the cloned repo
     iac_source_dir: "{{ git_clone_dest }}/iac-exports"
 
   collections:
@@ -24,20 +17,21 @@
     - ansible.platform
 
   pre_tasks:
-    - name: Validate required environment variables
+    - name: Validate required extra vars
       ansible.builtin.assert:
         that:
-          - my_auth_token is defined and my_auth_token != ''
-        fail_msg: "AAP_TOKEN variable must be set via Extra Vars or a Custom Credential"
+          - new_aap_gateway_url is defined and new_aap_gateway_url != ''
+          - my_aap_token is defined and my_aap_token != ''
+        fail_msg: "new_aap_gateway_url and my_aap_token must be provided via Extra Vars"
 
     - name: Clone IaC repository from GitHub
       ansible.builtin.git:
         repo: "{{ git_repo_url }}"
         dest: "{{ git_clone_dest }}"
-        version: "main"
+        version: main
         force: true
-        
-    - name: Check IaC source directory exists in cloned repo
+
+    - name: Verify IaC source directory exists
       ansible.builtin.stat:
         path: "{{ iac_source_dir }}"
       register: iac_dir
@@ -45,12 +39,11 @@
 
   tasks:
     # ---------------------------------------------------------
-    # ORGANIZATIONS (Gateway RBAC - ansible.platform)
+    # 1. ORGANIZATIONS (Gateway RBAC - ansible.platform)
     # ---------------------------------------------------------
     - name: Load organization definitions
       ansible.builtin.set_fact:
         organizations: "{{ lookup('file', iac_source_dir ~ '/organizations/organizations.yml', errors='ignore') | default('[]', true) | from_yaml }}"
-      ignore_errors: true
 
     - name: Create or update organizations
       ansible.platform.organization:
@@ -60,17 +53,15 @@
         state: present
         name: "{{ item.name }}"
         description: "{{ item.description | default(omit) }}"
-      loop: "{{ organizations | default([]) }}"
+      loop: "{{ organizations }}"
       register: org_deploy
-      ignore_errors: true
 
     # ---------------------------------------------------------
-    # USERS (Gateway RBAC - ansible.platform)
+    # 2. USERS (Gateway RBAC - ansible.platform)
     # ---------------------------------------------------------
     - name: Load user definitions
       ansible.builtin.set_fact:
         users: "{{ lookup('file', iac_source_dir ~ '/users/users.yml', errors='ignore') | default('[]', true) | from_yaml }}"
-      ignore_errors: true
 
     - name: Create or update users
       ansible.platform.user:
@@ -82,17 +73,15 @@
         email: "{{ item.email | default(omit) }}"
         first_name: "{{ item.first_name | default(omit) }}"
         last_name: "{{ item.last_name | default(omit) }}"
-      loop: "{{ users | default([]) }}"
+      loop: "{{ users }}"
       register: user_deploy
-      ignore_errors: true
 
     # ---------------------------------------------------------
-    # TEAMS (Gateway RBAC - ansible.platform)
+    # 3. TEAMS (Gateway RBAC - ansible.platform)
     # ---------------------------------------------------------
     - name: Load team definitions
       ansible.builtin.set_fact:
         teams: "{{ lookup('file', iac_source_dir ~ '/teams/teams.yml', errors='ignore') | default('[]', true) | from_yaml }}"
-      ignore_errors: true
 
     - name: Create or update teams
       ansible.platform.team:
@@ -101,19 +90,39 @@
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         name: "{{ item.name }}"
-        organization: "{{ item.organization | default(omit) }}"
+        organization: "{{ item.summary_fields.organization.name | default(omit) }}"
         description: "{{ item.description | default(omit) }}"
-      loop: "{{ teams | default([]) }}"
+      loop: "{{ teams }}"
       register: team_deploy
-      ignore_errors: true
 
     # ---------------------------------------------------------
-    # PROJECTS (Controller Execution - ansible.controller)
+    # 4. CREDENTIALS (Controller — shell only, no secrets)
+    # Creates credential placeholders so job templates can
+    # reference them by name. Secrets must be entered manually.
+    # ---------------------------------------------------------
+    - name: Load credential definitions
+      ansible.builtin.set_fact:
+        credentials: "{{ lookup('file', iac_source_dir ~ '/credentials/credentials_metadata.yml', errors='ignore') | default('[]', true) | from_yaml }}"
+
+    - name: Create or update credential shells
+      ansible.controller.credential:
+        controller_host: "{{ aap_host }}"
+        controller_oauthtoken: "{{ my_auth_token }}"
+        validate_certs: "{{ validate_certs_flag }}"
+        state: present
+        name: "{{ item.name }}"
+        organization: "{{ item.summary_fields.organization.name | default(omit) }}"
+        credential_type: "{{ item.summary_fields.credential_type.name | default(omit) }}"
+        description: "{{ item.description | default(omit) }}"
+      loop: "{{ credentials }}"
+      register: credential_deploy
+
+    # ---------------------------------------------------------
+    # 5. PROJECTS (Controller Execution - ansible.controller)
     # ---------------------------------------------------------
     - name: Load project definitions
       ansible.builtin.set_fact:
         projects: "{{ lookup('file', iac_source_dir ~ '/projects/projects.yml', errors='ignore') | default('[]', true) | from_yaml }}"
-      ignore_errors: true
 
     - name: Create or update projects
       ansible.controller.project:
@@ -122,21 +131,19 @@
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         name: "{{ item.name }}"
-        organization: "{{ item.organization | default(omit) }}"
+        organization: "{{ item.summary_fields.organization.name | default(omit) }}"
         scm_type: "{{ item.scm_type | default('') }}"
         scm_url: "{{ item.scm_url | default('') }}"
         scm_branch: "{{ item.scm_branch | default('main') }}"
-      loop: "{{ projects | default([]) }}"
+      loop: "{{ projects }}"
       register: project_deploy
-      ignore_errors: true
 
     # ---------------------------------------------------------
-    # INVENTORIES (Controller Execution - ansible.controller)
+    # 6. INVENTORIES (Controller Execution - ansible.controller)
     # ---------------------------------------------------------
     - name: Load inventory definitions
       ansible.builtin.set_fact:
         inventories: "{{ lookup('file', iac_source_dir ~ '/inventories/inventories.yml', errors='ignore') | default('[]', true) | from_yaml }}"
-      ignore_errors: true
 
     - name: Create or update inventories
       ansible.controller.inventory:
@@ -145,19 +152,17 @@
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         name: "{{ item.name }}"
-        organization: "{{ item.organization | default(omit) }}"
+        organization: "{{ item.summary_fields.organization.name | default(omit) }}"
         description: "{{ item.description | default(omit) }}"
-      loop: "{{ inventories | default([]) }}"
+      loop: "{{ inventories }}"
       register: inventory_deploy
-      ignore_errors: true
 
     # ---------------------------------------------------------
-    # INVENTORY SOURCES
+    # 7. INVENTORY SOURCES
     # ---------------------------------------------------------
     - name: Load inventory source definitions
       ansible.builtin.set_fact:
         inventory_sources: "{{ lookup('file', iac_source_dir ~ '/inventories/inventory_sources.yml', errors='ignore') | default('[]', true) | from_yaml }}"
-      ignore_errors: true
 
     - name: Create or update inventory sources
       ansible.controller.inventory_source:
@@ -166,22 +171,20 @@
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         name: "{{ item.name }}"
-        inventory: "{{ item.inventory }}"
+        inventory: "{{ item.summary_fields.inventory.name }}"
         source: "{{ item.source }}"
         source_path: "{{ item.source_path | default(omit) }}"
-        credential: "{{ item.credential | default(omit) }}"
+        credential: "{{ item.summary_fields.credential.name | default(omit) }}"
         update_on_launch: "{{ item.update_on_launch | default(omit) }}"
-      loop: "{{ inventory_sources | default([]) }}"
+      loop: "{{ inventory_sources }}"
       register: inv_source_deploy
-      ignore_errors: true
 
     # ---------------------------------------------------------
-    # STATIC HOSTS
+    # 8. STATIC HOSTS
     # ---------------------------------------------------------
     - name: Load host definitions
       ansible.builtin.set_fact:
         hosts: "{{ lookup('file', iac_source_dir ~ '/inventories/hosts.yml', errors='ignore') | default('[]', true) | from_yaml }}"
-      ignore_errors: true
 
     - name: Create or update hosts
       ansible.controller.host:
@@ -190,34 +193,43 @@
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         name: "{{ item.name }}"
-        inventory: "{{ item.inventory }}"
+        inventory: "{{ item.summary_fields.inventory.name }}"
         description: "{{ item.description | default(omit) }}"
-        variables: "{{ omit if item.variables == '---' or not item.variables else item.variables }}"
-      loop: "{{ hosts | default([]) }}"
+        variables: "{{ omit if not item.variables or item.variables == '---' else item.variables }}"
+      loop: "{{ hosts }}"
       register: host_deploy
-      ignore_errors: true
 
     # ---------------------------------------------------------
-    # EXECUTION ENVIRONMENTS (Controller)
+    # 9. EXECUTION ENVIRONMENTS (Controller reference)
+    # These are Controller-side EE pointers to images in Hub.
+    # Run deploy_aap_hub_resources.yml first to ensure the
+    # images exist in Hub before job templates run.
     # ---------------------------------------------------------
-    - name: Create or update Controller Execution Environments
+    - name: Load execution environment definitions
+      ansible.builtin.set_fact:
+        execution_environments: "{{ lookup('file', iac_source_dir ~ '/execution_environments/execution_environments.yml', errors='ignore') | default('[]', true) | from_yaml }}"
+
+    - name: Create or update Execution Environments
       ansible.controller.execution_environment:
         controller_host: "{{ aap_host }}"
-        controller_oauthtoken: "{{ my_aap_token }}"
+        controller_oauthtoken: "{{ my_auth_token }}"
         validate_certs: "{{ validate_certs_flag }}"
         state: present
-        name: "Private Hub EE Supported"
-        image: "rhel92.ofam.dev/ee-supported-rhel8:latest"
-        pull: "missing"
-      ignore_errors: true
+        name: "{{ item.name }}"
+        image: "{{ item.image }}"
+        pull: "{{ item.pull | default('missing') }}"
+        organization: "{{ item.summary_fields.organization.name | default(omit) }}"
+      loop: "{{ execution_environments }}"
+      register: ee_deploy
 
     # ---------------------------------------------------------
-    # JOB TEMPLATES (Controller Execution - ansible.controller)
+    # 10. JOB TEMPLATES (Controller Execution - ansible.controller)
+    # Deployed after projects, inventories, credentials, and EEs
+    # all exist — job templates reference all of them by name.
     # ---------------------------------------------------------
     - name: Load job template definitions
       ansible.builtin.set_fact:
         job_templates: "{{ lookup('file', iac_source_dir ~ '/job_templates/job_templates.yml', errors='ignore') | default('[]', true) | from_yaml }}"
-      ignore_errors: true
 
     - name: Create or update job templates
       ansible.controller.job_template:
@@ -226,24 +238,21 @@
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         name: "{{ item.name }}"
-        organization: "{{ item.organization | default(omit) }}"
-        project: "{{ omit if not item.project else item.project }}"
+        organization: "{{ item.summary_fields.organization.name | default(omit) }}"
+        project: "{{ item.summary_fields.project.name | default(omit) }}"
         playbook: "{{ item.playbook | default(omit) }}"
-        inventory: "{{ omit if not item.inventory else item.inventory }}"
-        execution_environment: "{{ omit if not item.execution_environment else item.execution_environment }}"
-        # FIX: Force prompt on launch if no default inventory is set
-        ask_inventory_on_launch: "{{ true if not item.inventory else item.ask_inventory_on_launch | default(false) }}"
-      loop: "{{ job_templates | default([]) }}"
+        inventory: "{{ item.summary_fields.inventory.name | default(omit) }}"
+        execution_environment: "{{ item.summary_fields.execution_environment.name | default(omit) }}"
+        ask_inventory_on_launch: "{{ true if not item.summary_fields.inventory.name | default('') else item.ask_inventory_on_launch | default(false) }}"
+      loop: "{{ job_templates }}"
       register: job_template_deploy
-      ignore_errors: true
 
     # ---------------------------------------------------------
-    # WORKFLOW TEMPLATES (Controller Execution - ansible.controller)
+    # 11. WORKFLOW TEMPLATES (Controller Execution - ansible.controller)
     # ---------------------------------------------------------
     - name: Load workflow template definitions
       ansible.builtin.set_fact:
         workflows: "{{ lookup('file', iac_source_dir ~ '/workflows/workflows.yml', errors='ignore') | default('[]', true) | from_yaml }}"
-      ignore_errors: true
 
     - name: Create or update workflow templates
       ansible.controller.workflow_job_template:
@@ -252,19 +261,17 @@
         validate_certs: "{{ validate_certs_flag }}"
         state: present
         name: "{{ item.name }}"
-        organization: "{{ item.organization | default(omit) }}"
+        organization: "{{ item.summary_fields.organization.name | default(omit) }}"
         description: "{{ item.description | default(omit) }}"
-      loop: "{{ workflows | default([]) }}"
+      loop: "{{ workflows }}"
       register: workflow_deploy
-      ignore_errors: true
 
     # ---------------------------------------------------------
-    # NOTIFICATION TEMPLATES (Controller Execution - ansible.controller)
+    # 12. NOTIFICATION TEMPLATES (Controller Execution - ansible.controller)
     # ---------------------------------------------------------
     - name: Load notification template definitions
       ansible.builtin.set_fact:
         notifications: "{{ lookup('file', iac_source_dir ~ '/notification_templates/notifications.yml', errors='ignore') | default('[]', true) | from_yaml }}"
-      ignore_errors: true
 
     - name: Create or update notification templates
       ansible.controller.notification_template:
@@ -274,20 +281,30 @@
         state: present
         name: "{{ item.name }}"
         notification_type: "{{ item.notification_type | default(omit) }}"
-      loop: "{{ notifications | default([]) }}"
+      loop: "{{ notifications }}"
       register: notification_deploy
-      ignore_errors: true
 
   post_tasks:
     - name: Display deployment summary
       ansible.builtin.debug:
         msg: |
-          Deployment Summary:
-          - Organizations created/updated: {{ org_deploy.results | length if org_deploy.results is defined else 0 }}
-          - Users created/updated: {{ user_deploy.results | length if user_deploy.results is defined else 0 }}
-          - Teams created/updated: {{ team_deploy.results | length if team_deploy.results is defined else 0 }}
-          - Projects created/updated: {{ project_deploy.results | length if project_deploy.results is defined else 0 }}
-          - Inventories created/updated: {{ inventory_deploy.results | length if inventory_deploy.results is defined else 0 }}
-          - Job Templates created/updated: {{ job_template_deploy.results | length if job_template_deploy.results is defined else 0 }}
-          - Workflow Templates created/updated: {{ workflow_deploy.results | length if workflow_deploy.results is defined else 0 }}
-          - Notification Templates created/updated: {{ notification_deploy.results | length if notification_deploy.results is defined else 0 }}
+          AAP Deployment Complete — {{ aap_host }}
+
+          Deployed (successful/total):
+            - Organizations:          {{ org_deploy.results | rejectattr('failed') | list | length }}/{{ org_deploy.results | length }}
+            - Users:                  {{ user_deploy.results | rejectattr('failed') | list | length }}/{{ user_deploy.results | length }}
+            - Teams:                  {{ team_deploy.results | rejectattr('failed') | list | length }}/{{ team_deploy.results | length }}
+            - Credentials (shells):   {{ credential_deploy.results | rejectattr('failed') | list | length }}/{{ credential_deploy.results | length }}
+            - Projects:               {{ project_deploy.results | rejectattr('failed') | list | length }}/{{ project_deploy.results | length }}
+            - Inventories:            {{ inventory_deploy.results | rejectattr('failed') | list | length }}/{{ inventory_deploy.results | length }}
+            - Inventory Sources:      {{ inv_source_deploy.results | rejectattr('failed') | list | length }}/{{ inv_source_deploy.results | length }}
+            - Hosts:                  {{ host_deploy.results | rejectattr('failed') | list | length }}/{{ host_deploy.results | length }}
+            - Execution Environments: {{ ee_deploy.results | rejectattr('failed') | list | length }}/{{ ee_deploy.results | length }}
+            - Job Templates:          {{ job_template_deploy.results | rejectattr('failed') | list | length }}/{{ job_template_deploy.results | length }}
+            - Workflow Templates:     {{ workflow_deploy.results | rejectattr('failed') | list | length }}/{{ workflow_deploy.results | length }}
+            - Notification Templates: {{ notification_deploy.results | rejectattr('failed') | list | length }}/{{ notification_deploy.results | length }}
+
+          ACTION REQUIRED:
+            - Credential secrets must be entered manually (not exported for security)
+            - EE images must exist in Hub before job templates that reference them will run
+            - Workflow nodes and survey specs must be reconfigured manually after deployment

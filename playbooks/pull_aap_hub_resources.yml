@@ -1,27 +1,23 @@
 ---
-- name: Pull AAP Hub Resources and Store as Infrastructure as Code.
+- name: Pull AAP Hub Resources and Store as Infrastructure as Code
   hosts: localhost
   connection: local
-  gather_facts: true
+  gather_facts: false
   vars:
-    # Pointing to your Private Automation Hub
-    ah_host: "https://rhel92.ofam.dev"
-    
-    # Using a dedicated token variable for Hub (or you can reuse the controller token if SSO is linked)
-#    ah_token: "{{ lookup('env', 'AH_TOKEN') }}"
+    ah_host: "{{ survey_ah_host }}"
     ah_token: "{{ AH_TOKEN }}"
     ah_validate_certs: "{{ validate_certs | default(false) }}"
-    
-    # Output directories to avoid colliding with your controller exports
     iac_output_dir: "./iac-hub-exports"
     git_token_variable: "{{ github_token }}"
 
   pre_tasks:
-    - name: Validate required environment variables
+    - name: Validate required variables
       ansible.builtin.assert:
         that:
+          - ah_host is defined and ah_host != ''
           - ah_token is defined and ah_token != ''
-        fail_msg: "AH_TOKEN environment variable must be set"
+          - git_token_variable is defined and git_token_variable != ''
+        fail_msg: "survey_ah_host, AH_TOKEN, and github_token must all be provided"
 
     - name: Create output directory structure
       ansible.builtin.file:
@@ -47,14 +43,11 @@
         validate_certs: "{{ ah_validate_certs }}"
         return_content: true
       register: namespaces_api
-      ignore_errors: true
 
     - name: Export namespaces to YAML
       ansible.builtin.copy:
-        # Fallback to .results or the raw json if .data doesn't exist
-        content: "{{ namespaces_api.json.data | default(namespaces_api.json.results | default(namespaces_api.json)) | to_nice_yaml }}"
+        content: "{{ namespaces_api.json.data | default(namespaces_api.json.results | default([])) | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/namespaces/namespaces.yml"
-      when: namespaces_api is not failed
 
     # ---------------------------------------------------------
     # EXECUTION ENVIRONMENTS
@@ -68,13 +61,11 @@
         validate_certs: "{{ ah_validate_certs }}"
         return_content: true
       register: ee_api
-      ignore_errors: true
 
     - name: Export Execution Environments to YAML
       ansible.builtin.copy:
-        content: "{{ ee_api.json.data | default(ee_api.json.results | default(ee_api.json)) | to_nice_yaml }}"
+        content: "{{ ee_api.json.data | default(ee_api.json.results | default([])) | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/execution_environments/execution_environments.yml"
-      when: ee_api is not failed
 
     # ---------------------------------------------------------
     # REMOTES (Remote Collection Registries)
@@ -88,42 +79,36 @@
         validate_certs: "{{ ah_validate_certs }}"
         return_content: true
       register: remotes_api
-      ignore_errors: true
 
     - name: Export Remotes to YAML
       ansible.builtin.copy:
-        content: "{{ remotes_api.json.data | default(remotes_api.json.results | default(remotes_api.json)) | to_nice_yaml }}"
+        content: "{{ remotes_api.json.data | default(remotes_api.json.results | default([])) | to_nice_yaml }}"
         dest: "{{ iac_output_dir }}/remotes/remotes.yml"
-      when: remotes_api is not failed
 
   post_tasks:
     - name: Create summary report
       ansible.builtin.copy:
         content: |
           # AAP Hub Resource Export Summary
-          Generated: {{ ansible_date_time.iso8601 }}
+          Generated: {{ now(utc=true, fmt='%Y-%m-%dT%H:%M:%SZ') }}
           Hub Host: {{ ah_host }}
-          
+
           ## Exported Resources
-          - Namespaces: {{ namespaces_api.json.data | default(namespaces_api.json.results | default([])) | length if namespaces_api is not failed else 'Failed to pull' }}
-          - Execution Environments: {{ ee_api.json.data | default(ee_api.json.results | default([])) | length if ee_api is not failed else 'Failed to pull' }}
-          - Remotes: {{ remotes_api.json.data | default(remotes_api.json.results | default([])) | length if remotes_api is not failed else 'Failed to pull' }}
-          
+          - Namespaces: {{ namespaces_api.json.data | default(namespaces_api.json.results | default([])) | length }}
+          - Execution Environments: {{ ee_api.json.data | default(ee_api.json.results | default([])) | length }}
+          - Remotes: {{ remotes_api.json.data | default(remotes_api.json.results | default([])) | length }}
+
           ## Location
           Export directory: {{ iac_output_dir }}
         dest: "{{ iac_output_dir }}/EXPORT_SUMMARY.md"
 
-    - name: Display export summary
-      ansible.builtin.debug:
-        msg: "Hub resources exported to {{ iac_output_dir }}"
-
-    # Storing clone in a different /tmp folder to avoid conflicts with Controller git clones
     - name: Clone the CaC repository
       ansible.builtin.git:
-        repo: 'https://{{ git_token_variable }}@github.com/NAOwens/aap-iac.git' 
+        repo: "https://{{ git_token_variable }}@github.com/NAOwens/aap-iac.git"
         dest: /tmp/cac_hub_repo
         version: main
-        accept_hostkey: true 
+        accept_hostkey: true
+      no_log: true
 
     - name: Copy exported Hub files to the git repository
       ansible.builtin.copy:
@@ -131,7 +116,14 @@
         dest: /tmp/cac_hub_repo/iac-hub-exports/
         remote_src: true
 
-    - name: Add, commit, and push exported files to Git
+    - name: Check for changed files
+      ansible.builtin.command: git status --porcelain
+      args:
+        chdir: /tmp/cac_hub_repo
+      register: git_status
+      changed_when: false
+
+    - name: Commit and push exported files to GitHub
       ansible.builtin.shell: |
         git config user.email "owensna7@gmail.com"
         git config user.name "NAOwens"
@@ -142,8 +134,10 @@
       args:
         chdir: /tmp/cac_hub_repo
       environment:
-        GIT_TERMINAL_PROMPT: "0"  # Forces Git to fail instead of hanging!
-      register: git_result
-      failed_when: 
-        - git_result.rc != 0
-        - "'nothing to commit' not in git_result.stdout"
+        GIT_TERMINAL_PROMPT: "0"
+      when: git_status.stdout | length > 0
+      no_log: true
+
+    - name: Display export summary
+      ansible.builtin.debug:
+        msg: "Hub resources exported to {{ iac_output_dir }} — {{ 'committed and pushed to GitHub' if git_status.stdout | length > 0 else 'no changes detected, nothing pushed' }}"
